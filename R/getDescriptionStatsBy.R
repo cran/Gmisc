@@ -17,6 +17,8 @@
 #'  should be presented first. The second is encapsulated in parentheses ().
 #' @param show_missing Show the missing values. This adds another row if 
 #'  there are any missing values.
+#' @param show_missing_digits The number of digits to use for the 
+#'  missing percentage, defaults to the overall \code{digits}.
 #' @param continuous_fn The method to describe continuous variables. The
 #'  default is \code{\link{describeMean}}.
 #' @param prop_fn The method used to describe proportions, see \code{\link{describeProp}}.
@@ -61,6 +63,7 @@
 #' @seealso \code{\link{describeMean}}, \code{\link{describeProp}}, \code{\link{describeFactors}}, \code{\link{htmlTable}}
 #' 
 #' @importFrom Hmisc label
+#' @importFrom Hmisc units
 #' @importFrom Hmisc capitalize
 #' 
 #' @author max
@@ -72,6 +75,7 @@ getDescriptionStatsBy <-
            statistics=FALSE, 
            sig.limit=10^-4, two_dec.limit= 10^-2,
            show_missing = FALSE,
+           show_missing_digits = digits,
            continuous_fn = describeMean,
            prop_fn = describeProp,
            factor_fn = describeFactors,
@@ -91,11 +95,32 @@ getDescriptionStatsBy <-
       stop("You haven't provided an by-value to do the statistics by.",
            " This error is most frequently caused by referencing an old",
            " variable name that doesn't exist anymore")
-    # Just send a warning, since the user might be unaware of this
+    
+    # If there is a label for the variable
+    # that one should be used otherwise go
+    # with the name of the variable
+    if (label(x) == "")
+      name <- deparse(substitute(x))
+    else
+      name <- label(x)
+    
+    
+    # Check missing - 
+    # Send a warning, since the user might be unaware of this
     # potentially disturbing fact. The dataset should perhaps by 
     # subsetted by is.na(by) == FALSE
-    if (any(is.na(by)))
-      warning(sprintf("Your 'by' variable has %d missing values", sum(is.na(by))))
+    if (any(is.na(by))){
+      warning(sprintf("Your 'by' variable has %d missing values", sum(is.na(by))),
+              "\n   The corresponding 'x' and 'by' variables are automatically removed")
+      x <- x[!is.na(by)]
+      if (inherits(x, "factor")){
+        x <- factor(x)
+      }
+      by <- by[!is.na(by)]
+      if (inherits(by, "factor")){
+        by <- factor(by)
+      }
+    }
     
     show_missing <- prConvertShowMissing(show_missing)
     
@@ -153,25 +178,22 @@ getDescriptionStatsBy <-
     }
     
     
-    # If there is a label for the variable
-    # that one should be used otherwise go
-    # with the name of the variable
-    if (label(x) == "")
-      name <- deparse(substitute(x))
-    else
-      name <- label(x)
     
     if (!is.logical(x) && is.numeric(x)){
       # If the numeric has horizontal_proportions then it's only so in the 
       # missing category
       if (hrzl_prop)
         t <- by(x, by, FUN=continuous_fn, html=html, digits=digits,
-                number_first=numbers_first, show_missing = show_missing, 
+                number_first=numbers_first, 
+                show_missing = show_missing, 
+                show_missing_digits = show_missing_digits,
                 horizontal_proportions = table(is.na(x), useNA=show_missing),
                 percentage_sign = percentage_sign)
       else
         t <- by(x, by, FUN=continuous_fn, html=html, digits=digits,
-                number_first=numbers_first, show_missing = show_missing,
+                number_first=numbers_first, 
+                show_missing = show_missing,
+                show_missing_digits = show_missing_digits,
                 percentage_sign = percentage_sign)
       
       
@@ -194,7 +216,9 @@ getDescriptionStatsBy <-
       default_ref <- prGetAndValidateDefaultRef(x, default_ref)
       
       t <- by(x, by, FUN=prop_fn, html=html, digits=digits,
-              number_first=numbers_first, show_missing = show_missing,
+              number_first=numbers_first, 
+              show_missing = show_missing,
+              show_missing_digits = show_missing_digits,
               default_ref = default_ref, percentage_sign = percentage_sign)
       
       # Set the rowname to a special format
@@ -227,15 +251,20 @@ getDescriptionStatsBy <-
       }
       
     }else{
-      if (hrzl_prop)
+      if (hrzl_prop){
         t <- by(x, by, FUN=factor_fn, html=html, digits=digits,
-                number_first=numbers_first, show_missing = show_missing, 
+                number_first=numbers_first, 
+                show_missing = show_missing, 
+                show_missing_digits = show_missing_digits,
                 horizontal_proportions = table(x, useNA=show_missing),
                 percentage_sign = percentage_sign)
-      else
+      }else{
         t <- by(x, by, FUN=factor_fn, html=html, digits=digits,
-                number_first=numbers_first, show_missing = show_missing,
+                number_first=numbers_first, 
+                show_missing = show_missing,
+                show_missing_digits = show_missing_digits,
                 percentage_sign = percentage_sign)
+      }
       
       if (statistics){
         # This is a quick fix in case of large dataset
@@ -276,6 +305,7 @@ getDescriptionStatsBy <-
                                      show_perc=total_col_show_perc, 
                                      show_all_values = show_all_values,
                                      show_missing=show_missing, 
+                                     show_missing_digits = show_missing_digits,
                                      html=html, 
                                      digits=digits, 
                                      continuous_fn = continuous_fn, 
@@ -332,7 +362,7 @@ getDescriptionStatsBy <-
     # Even if one row has the same name this doesn't matter
     # at this stage as it is information that may or may 
     # not be used later on
-    label(results) <- name 
+    label(results) <- name
     
     return (results)
   }

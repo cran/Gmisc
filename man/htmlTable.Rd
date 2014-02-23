@@ -1,16 +1,19 @@
 \name{htmlTable}
 \alias{htmlTable}
+\alias{print.htmlTable}
 \title{Outputting HTML tables}
 \usage{
-htmlTable(x, title = first.word(deparse(substitute(x))), headings = NA,
+htmlTable(x, title = first.word(deparse(substitute(x))), headings,
   align = paste(c("l", rep("c", ncol(x) - 1)), collapse = ""),
-  halign = paste(rep("c", ncol(x)), collapse = ""), cgroup = NULL,
-  n.cgroup = NULL, cgroup.just = NULL, rgroup = NULL, n.rgroup = NULL,
-  rgroupCSSstyle = "font-weight: 900;",
-  rgroupCSSseparator = "border-top: 1px solid grey;", rowlabel = title,
+  halign = paste(rep("c", ncol(x)), collapse = ""), cgroup, n.cgroup,
+  cgroup.just, rgroup, n.rgroup, rgroupCSSstyle = "font-weight: 900;",
+  rgroupCSSseparator = "", tspanner, n.tspanner,
+  tspannerCSSstyle = "font-weight: 900; text-transform:capitalize; text-align: center;",
+  tspannerCSSseparator = "border-top: 1px solid grey;", rowlabel = title,
   rowlabel.pos = "bottom", ctable = FALSE, compatibility = "LibreOffice",
-  rowname = NA, caption = NULL, caption.loc = "top", tfoot = NULL,
-  label = NULL, output = TRUE, ...)
+  rowname, caption, caption.loc = "top", tfoot, label, ...)
+
+\method{print}{htmlTable}(x, useViewer = TRUE, ...)
 }
 \arguments{
   \item{x}{The matrix/data.frame with the data}
@@ -72,7 +75,7 @@ htmlTable(x, title = first.word(deparse(substitute(x))), headings = NA,
   \code{n.rgroup} is omitted, \code{n.rgroup} will default
   so that each row group contains the same number of rows.}
 
-  \item{rgroupCSSstyle}{Css style for the rgorup, if
+  \item{rgroupCSSstyle}{CSS style for the rgorup, if
   different styles are wanted for each of the rgroups you
   can just specify a vector with the number of elements}
 
@@ -84,6 +87,19 @@ htmlTable(x, title = first.word(deparse(substitute(x))), headings = NA,
   different separators if you give a vector of rgroup - 1
   length (this is since the first rgroup doesn't have a
   separator).}
+
+  \item{tspanner}{The table spanner is somewhat of a table
+  header that you can use when you want to join different
+  tables with the same columns.}
+
+  \item{n.tspanner}{The number of rows in the original
+  matrix that the table spanner should span}
+
+  \item{tspannerCSSstyle}{The CSS style for the table
+  spanner}
+
+  \item{tspannerCSSseparator}{The line between different
+  spanners}
 
   \item{rowlabel}{If x has row dimnames, rowlabel is a
   character string containing the column heading for the
@@ -133,8 +149,11 @@ htmlTable(x, title = first.word(deparse(substitute(x))), headings = NA,
   \item{...}{Currently not used, here for compatibility
   reasons}
 
-  \item{output}{Set to false if you don't want an immediate
-  print}
+  \item{useViewer}{If you are using RStudio there is a
+  viewer thar can render the table within that is
+  automatically envoced unless you have the knitr package
+  loaded. Set this to \code{FALSE} if you want to remove
+  that functionality.}
 }
 \value{
 Returns a string with the output table if output is not set
@@ -150,6 +169,11 @@ LibreOffice/OpenOffice that lacks any more advanced
 understanding of HTML & CSS.
 }
 \details{
+Note that when you use knitr in markdown mode you need to
+specify: results="asis". It is also good to know that the
+function outputs raw html, this limits the compatibility
+with pandoc and similar tools.
+
 If you set the option table_counter you will get a Table
 1,2,3 etc before each table, just set
 \code{options(table_counter=TRUE)}. If you set it to a
@@ -223,7 +247,7 @@ htmlTable(
   caption  = "Continuous & binary variables", 
   n.rgroup=c(2,1), rgroup=c("Gas", "Weight"),
   n.cgroup=c(2,1), 
-  cgroup=c(splitLines4Table("results", sprintf("n=\%d", NROW(mtcars)), html=TRUE),
+  cgroup=c(splitLines4Table("Results", sprintf("n=\%d", NROW(mtcars)), html=TRUE),
            ""),
   colheads = c(sprintf("\%s (SD)", levels(mtcars$am)), "units"),
   rowlabel = "Variable",

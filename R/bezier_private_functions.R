@@ -36,12 +36,14 @@ validateAndConvertVectorInputs <- function(x, y,
   if (class(y_origo) != class(x_origo))
     stop("The x and y point for the origo point don't have the same class,",
       " should be either numeric or units.",
-      " Currently you have provided y=", class(y), " & x=", class(x))
+      " Currently you have provided y=", class(y_origo),
+      " & x=", class(x_origo))
   
   if (class(y) != class(y_origo))
     stop("The angle won't make any sense if your x and y point",
       " doesn't have the same unit as the origo x and y point.",
-      " Currently you have provided point class=", class(y), " & origo class=", class(x))
+      " Currently you have provided point class=", class(y), 
+      " & origo class=", class(y_origo))
   
   return (list(y=y, x=x,
       y_origo=y_origo, x_origo=x_origo))
@@ -60,7 +62,7 @@ validateAndConvertVectorInputs <- function(x, y,
 #' 
 #' @author max
 getVectorAngle <- function(x, y, 
-  x_origo=NA, y_origo=NA, default.units = "npc"){
+  x_origo=NA, y_origo=NA, default.units = "mm"){
   v <- validateAndConvertVectorInputs(x=x, y=y, 
     x_origo=x_origo, y_origo=y_origo)
   
@@ -100,6 +102,7 @@ isHorizontal <- function(angle_radian){
 #' @param y The y point of the vector
 #' @param x_origo The x origin if other than 0
 #' @param y_origo The y origin if other than 0
+#' @param default.units The \code{\link[grid]{unit}} type
 #' @param ... Passed on to \code{\link{rotateWidthAccAngle}} after
 #'  calculating the angle from the vector. 
 #' 
@@ -107,9 +110,11 @@ isHorizontal <- function(angle_radian){
 #'  and a angle element
 #' 
 #' @author max
-rotateWidthAccVector <- function (x, y, 
-  x_origo=NA, y_origo=NA, 
-  ...) {
+rotateWidthAccVector <- 
+  function (x, y, 
+            x_origo=NA, y_origo=NA, 
+            default.units,
+            ...) {
   v <- validateAndConvertVectorInputs(x=x, y=y, 
     x_origo=x_origo, y_origo=y_origo)
   angle <- getVectorAngle(x=x, y=y, 
@@ -118,6 +123,7 @@ rotateWidthAccVector <- function (x, y,
   return (rotateWidthAccAngle(angle = angle, 
       x_origo = x_origo,
       y_origo = y_origo,
+      default.units = default.units,
       ...))
 }
 
@@ -146,11 +152,13 @@ rotateWidthAccVector <- function (x, y,
 rotateWidthAccAngle <- function (angle, 
   x_origo=NA, y_origo=NA, 
   width = 0, 
-  default.units = "npc",
+  default.units,
   perpendicular = TRUE,
   prev_angle = NA) {
-  v <- validateAndConvertVectorInputs(x=1, y=1, 
-    x_origo=x_origo, y_origo=y_origo)
+
+  if (class(x_origo) != class(y_origo))
+    stop("The two origo points should be of the same type:",
+         " y_origo=", class(y_origo), " x_origo=", class(x_origo))
 
   working_angle <- mean(c(angle, prev_angle), na.rm=TRUE)
   
@@ -187,12 +195,14 @@ rotateWidthAccAngle <- function (angle,
   left <- unit(left, w_unit)
   right <- unit(right, w_unit)
   
-  if ("unit" %in% class(v$x_origo)){
-    left <- left + unit.c(v$x_origo, v$y_origo)
-    right <- right + unit.c(v$x_origo, v$y_origo)
-  }else{
-    left <- left + unit(c(v$x_origo, v$y_origo), default.units)
-    right <- right + unit(c(v$x_origo, v$y_origo), default.units)
+  if (!is.na(x_origo)){
+    if ("unit" %in% class(x_origo)){
+      left <- left + unit.c(x_origo, y_origo)
+      right <- right + unit.c(x_origo, y_origo)
+    }else{
+      left <- left + unit(c(x_origo, y_origo), default.units)
+      right <- right + unit(c(x_origo, y_origo), default.units)
+    }
   }
   
   return (list(left=left,
@@ -200,6 +210,7 @@ rotateWidthAccAngle <- function (angle,
       angle=angle))
 }
 
+   
 #' Gets the lines shifted according to width
 #' 
 #' The lines are the upper and the lower lines that will make up the
@@ -217,15 +228,19 @@ rotateWidthAccAngle <- function (angle,
 #'  axis. Which is decided by which axis is the closes one.
 #' @return A list with left and right elements indicating the two lines 
 #' 
+#' @importFrom sp point.in.polygon
 #' @author max
-getLines <- function(bp, end_point, width, default.units, align_2_axis = TRUE){
+getLines <- function(bp, end_point, 
+                     width, default.units, 
+                     align_2_axis = TRUE){
   # This initiation is necessary due to the unit inflexibility
   lr_width <- rotateWidthAccVector(x_origo=bp$x[1], 
     y_origo=bp$y[1],
     x=bp$x[2], 
     y=bp$y[2],
     width=width,
-    perpendicular=TRUE)
+    perpendicular=TRUE,
+    default.units=default.units)
   lines <- list(left = list(x=lr_width$left[1],
       y=lr_width$left[2]),
     right = list(x=lr_width$right[1],
@@ -240,6 +255,17 @@ getLines <- function(bp, end_point, width, default.units, align_2_axis = TRUE){
     return(lines)
   }
   
+  is_point_in_poly <- function(point, lines){
+    point.in.polygon(point.x=convertX(point[1], unitTo="mm", valueOnly=TRUE),
+                     point.y=convertY(point[2], unitTo="mm", valueOnly=TRUE),
+                     pol.x = convertX(unit.c(lines$right$x, 
+                                             lines$left$x),
+                                      unitTo="mm", valueOnly=TRUE),
+                     pol.y = convertX(unit.c(lines$right$y, 
+                                             lines$left$y),
+                                      unitTo="mm", valueOnly=TRUE),
+                     mode.checked=TRUE)==1
+  }
   for (i in 2:(length(bp$x)-1)){
     lr_width <- rotateWidthAccVector(x_origo=bp$x[i], 
       y_origo=bp$y[i],
@@ -247,9 +273,22 @@ getLines <- function(bp, end_point, width, default.units, align_2_axis = TRUE){
       y=bp$y[i+1],
       width=width,
       perpendicular=TRUE,
-      prev_angle=lr_width$angle)
+      prev_angle=lr_width$angle,
+      default.units=default.units)
+    if (length(lines$right$x) > 3){
+      if (is_point_in_poly(lr_width$right, lines)){
+        # Copy last point
+        lr_width$right <- unit.c(tail(lines$right$x, 1),
+                                 tail(lines$right$y, 1))
+      }
+      if (is_point_in_poly(lr_width$left, lines)){
+        # Copy last point
+        lr_width$left <- unit.c(tail(lines$left$x, 1),
+                                   tail(lines$left$y, 1))
+      }
+    }
     lines <- addLineOffset(bp$x[i], bp$y[i],
-      lines, lr_width)
+      lines=lines, offset=lr_width)
   }
   
   # For the last element use the arrow direction
@@ -258,7 +297,8 @@ getLines <- function(bp, end_point, width, default.units, align_2_axis = TRUE){
     x_origo=bp$x[i+1],
     y_origo=bp$y[i+1],
     width=width,
-    perpendicular=TRUE)
+    perpendicular=TRUE,
+    default.units = default.units)
   lines <- addLineOffset(bp$x[i+1], bp$y[i+1],
     lines, lr_width)
   
@@ -276,14 +316,14 @@ getLines <- function(bp, end_point, width, default.units, align_2_axis = TRUE){
     
     if (shorten_by_x)
       if (x[1] < x[2]) 
-        keep <- which(x > ref_x)
+        keep <- which(x > ref_x)[1]:length(x)
       else
-        keep <- which(x < ref_x)
+        keep <- which(x < ref_x)[1]:length(x)
     else
       if (y[1] < y[2])
-        keep <- which(y > ref_y)
+        keep <- which(y > ref_y)[1]:length(y)
       else
-        keep <- which(y < ref_y)
+        keep <- which(y < ref_y)[1]:length(y)
     
     x <- unit(c(ref_x, x[keep]), default.units)
     y <- unit(c(ref_y, y[keep]), default.units)
@@ -294,7 +334,9 @@ getLines <- function(bp, end_point, width, default.units, align_2_axis = TRUE){
   
   # Adds the missing piece by generating another bezier curve
   # for that specific section
-  extendLine <- function(x, y, ref_x, ref_y, default.units, extend_by_x = TRUE){
+  extendLine <- function(x, y, 
+                         ref_x, ref_y, 
+                         default.units, extend_by_x = TRUE){
     if ("unit" %in% class(x))
       x <- convertX(x, unitTo=default.units, valueOnly=TRUE)
     if ("unit" %in% class(y))
@@ -316,7 +358,8 @@ getLines <- function(bp, end_point, width, default.units, align_2_axis = TRUE){
         y=c(y[1], 
           y[1],
           y[1] + distanceY/2,
-          ref_y))
+          ref_y),
+        default.units=default.units)
     else
       add_bg <- bezierGrob(x=c(x[1], 
           x[1],
@@ -325,7 +368,8 @@ getLines <- function(bp, end_point, width, default.units, align_2_axis = TRUE){
         y=c(y[1], 
           y[1] + distanceY/2,
           y[1] + distanceY/2,
-          ref_y))
+          ref_y),
+        default.units=default.units)
     
     add_bg_pt <- bezierPoints(add_bg)
     add_x <- rev(convertX(add_bg_pt$x, unitTo=default.units, valueOnly=TRUE))
@@ -357,7 +401,8 @@ getLines <- function(bp, end_point, width, default.units, align_2_axis = TRUE){
       return (lines)
     }
     
-    adaptLine2RightTurn <- function(lines, org_offset, default.units, horizontal){
+    adaptLine2RightTurn <- function(lines, org_offset, 
+                                    default.units, horizontal){
       # left is shorter due to the left skew
       lines$right <- shortenLine(x=lines$right$x, y=lines$right$y, 
         ref_x = org_offset$right[1],
@@ -372,19 +417,19 @@ getLines <- function(bp, end_point, width, default.units, align_2_axis = TRUE){
       return (lines)
     }
     
-    
+    numerical_bp <- lapply(bp, function(x) getGridVal(x, default.units))
     if (isHorizontal(angle)){
       # Get the original points of interest
-      if (bp$x[2] > bp$x[1]){
+      if (numerical_bp$x[2] > numerical_bp$x[1]){
         # Going right
         angle <- 0
-        if (bp$y[2] < bp$y[1])
+        if (numerical_bp$y[2] < numerical_bp$y[1])
           turn <- "right"
         else
           turn <- "left"
       }else{
         angle <- pi
-        if (bp$x[2] > bp$x[1])
+        if (numerical_bp$x[2] > numerical_bp$x[1])
           turn <- "right"
         else
           turn <- "left"
@@ -399,16 +444,16 @@ getLines <- function(bp, end_point, width, default.units, align_2_axis = TRUE){
     }else{
       # Vertical
       # Get the original points of interest
-      if (bp$y[2] > bp$y[1]){
+      if (numerical_bp$y[2] > numerical_bp$y[1]){
         # Going up
         angle <-pi/2
-        if (bp$x[2] > bp$x[1])
+        if (numerical_bp$x[2] > numerical_bp$x[1])
           turn <- "right"
         else
           turn <- "left"
       }else{
         angle <-pi*3/2
-        if (bp$x[2] < bp$x[1])
+        if (numerical_bp$x[2] < numerical_bp$x[1])
           turn <- "right"
         else
           turn <- "left"
@@ -471,27 +516,28 @@ getLinesWithArrow <- function(bp, arrow, end_points, width, default.units, align
   
   tmp <- rotateWidthAccVector(x=arrow$x,
     y=arrow$y,
-    width=arrow$base)
+    width=arrow$base,
+    default.units = default.units)
   arrow$left <- tmp$left
   arrow$right <- tmp$right
   lines$left$x <- unit.c(lines$left$x,
 #    lines$left$x[length(lines$left$x)] + 
-      unit(bp$x[length(bp$x)], "npc") + 
+      unit(bp$x[length(bp$x)], default.units) + 
         arrow$left[1],
-      unit(end_points$end$x, "npc"))
+      unit(end_points$end$x, default.units))
   lines$left$y <- unit.c(lines$left$y,
 #    lines$left$y[length(lines$left$y)] + 
-      unit(bp$y[length(bp$y)], "npc") + 
+      unit(bp$y[length(bp$y)], default.units) + 
           arrow$left[2],
-      unit(end_points$end$y, "npc"))
+      unit(end_points$end$y, default.units))
   lines$right$x <- unit.c(lines$right$x,
 #    lines$right$x[length(lines$right$x)] + 
-      unit(bp$x[length(bp$x)], "npc") + 
+      unit(bp$x[length(bp$x)], default.units) + 
           arrow$right[1]
   )
   lines$right$y <- unit.c(lines$right$y,
 #    lines$right$y[length(lines$right$y)] + 
-      unit(bp$y[length(bp$y)], "npc") + 
+      unit(bp$y[length(bp$y)], default.units) + 
           arrow$right[2])
   
   return (lines)
@@ -504,12 +550,14 @@ getLinesWithArrow <- function(bp, arrow, end_points, width, default.units, align
 #'  
 #' @param x Value 
 #' @param default.units The unit type 
+#' @param axisTo The axis that is used, useful for "npc" where
+#'  there is a big difference in height and width
 #' @return float 
 #' 
 #' @author Max
-getGridVal <- function(x, default.units){
+getGridVal <- function(x, default.units, axisTo="x"){
   if("unit" %in% class(x))
-    return(convertUnit(x, unitTo=default.units, valueOnly=TRUE))
+    return(convertUnit(x, unitTo=default.units, valueOnly=TRUE, axisTo=axisTo))
   else
     return(x)
 }

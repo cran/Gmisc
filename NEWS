@@ -1,5 +1,31 @@
 NEWS for the Gmisc package
 
+Changes for 0.6.2.0
+-------------------
+* Added the viewer for htmlTable allowing for direct visualisation in RStudio of the tables. Outside RStudio the utils::browseURL is used.
+* htmlTable added table spanner functionality, some man-page update, removed the default NULL arguments in favor of the missing() funciton, and a few minor bugfixes.
+
+Changes for 0.6.1.1
+-------------------
+* The bezierArrowSmpl now uses "mm" internally instead of the default "npc" - this improves the rendering as the "npc" is dependent on the axis. A few adjustments to arrow functions were also added.
+* Bugfixes for the bezierArrowSmplGradient.
+* Bugfixed missing data for getDescriptionStats and generated a test-file in order to check most combinations that they work
+* Fixed the legend-bug for forestplot2 when using points
+
+Changes for 0.6.1.0
+--------------------
+* Added legend markers option for the forestplot2 function
+
+Changes for 0.6.0.2
+--------------------
+* Fixed ticks for forestplot2 - the prFpGetGraphTicksAndClips used the exp() for regular values.
+* Cleaned up some of the code for the fpDrawXXXCI functions
+
+
+Changes for 0.6.0.1
+--------------------
+* Changed depends and imports for the package
+
 Changes for 0.6.0.0
 --------------------
 * For LibreOffice compatibility htmlTable now includes caption inside the table when compatibility='LibreOffice'
