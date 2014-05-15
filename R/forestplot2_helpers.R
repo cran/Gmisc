@@ -40,6 +40,7 @@
 #' @rdname fpDrawCI
 #' @author Max
 #' @export
+#' @family forestplot functions
 fpDrawNormalCI <- function(lower_limit, 
                            estimate, 
                            upper_limit, 
@@ -371,6 +372,7 @@ fpDrawSummaryCI <- function(lower_limit, estimate, upper_limit,
 #' @importFrom grDevices colorRampPalette
 #' 
 #' @export
+#' @family forestplot functions
 fpColors <- function (all.elements, 
                       box        = "black", 
                       lines      = "gray", 
@@ -430,6 +432,7 @@ fpColors <- function (all.elements,
 #' and \code{\link[base]{eval}} functions: \code{eval(as.call(list(fn[[row]][[col]], arg_1=1, arg_2=2)))}
 #' 
 #' @author Max
+#' @keywords internal
 prFpGetConfintFnList <- function(fn, no_rows, no_cols){
   # Return a list that has
   # a two dim structure of [[row]][[col]]
@@ -596,6 +599,7 @@ prFpGetConfintFnList <- function(fn, no_rows, no_cols){
 #' @return list Returns a list with axis_vp, axisGrob, labGrob, zero and clip
 #' 
 #' @author Max
+#' @keywords internal
 prFpGetGraphTicksAndClips <- function(xticks, 
                                       xticks.digits, 
                                       xlog, 
@@ -719,26 +723,22 @@ prFpGetGraphTicksAndClips <- function(xticks,
                     gp    = gpar(cex = cex.axis, 
                                  col = col$axes, 
                                  lwd=lwd.xaxis))
-    dg_height <- 
-      convertUnit(grobHeight(textGrob("I", gp=gpar(cex=cex.axis))), "npc") + 
-      unit(1, "lines")
   }else{
     dg <- FALSE
-    dg_height <- 0 
   }
 
   if (length(xlab) == 1 && nchar(xlab) > 0){
     # Write the label for the x-axis
     labGrob <- textGrob(xlab, 
-                        y = unit(-2, "lines"), 
                         gp = gpar(col = col$axes, cex=cex))
     
-  }else
+  }else{
     labGrob <- FALSE
+  }
+    
   
   return(list(axis_vp = axis_vp,
               axisGrob = dg,
-              axisHeight = dg_height,
               labGrob = labGrob,
               zero = zero,
               clip = clip,
@@ -756,6 +756,7 @@ prFpGetGraphTicksAndClips <- function(xticks,
 #' @return void 
 #' 
 #' @author Max
+#' @keywords internal
 prFpPrintXaxis <- function(axisList, 
                            col, 
                            lwd.zero){
@@ -767,14 +768,28 @@ prFpPrintXaxis <- function(axisList,
              y  = 0:1, 
              gp = gpar(col = col$zero, lwd=lwd.zero))
   
+  lab_y <- unit(0, "mm")
+  lab_grob_height <- unit(-2, "mm")
   # Omit the axis if specified as 0
   if (is.grob(axisList$axisGrob)){
     # Plot the actual x-axis
     grid.draw(axisList$axisGrob)
+    lab_grob_height <- grobHeight(axisList$axisGrob)
+    lab_y <- lab_y - lab_grob_height
   }
   
   if (is.grob(axisList$labGrob)){
+    # Add some padding between text and ticks proportional to the ticks height
+    padding <- 
+      unit(convertY(lab_grob_height, "lines", valueOnly=TRUE)*0.1,
+           "lines")
+
+    # The text is strangely messy
+    # and needs its own viewport
+    pushViewport(viewport(height=grobHeight(axisList$labGrob), 
+                          y=lab_y - padding, just="top"))
     grid.draw(axisList$labGrob)
+    upViewport()
   }
   upViewport()
 }
@@ -791,6 +806,7 @@ prFpPrintXaxis <- function(axisList,
 #' @return void
 #' 
 #' @author Max
+#' @keywords internal
 prFpPrintLabels <- function(labels, nc, nr){
   # Output the labels
   # The column
@@ -822,6 +838,7 @@ prFpPrintLabels <- function(labels, nc, nr){
 #'  legend is saved inside \code{attr("title")}
 #' 
 #' @author max
+#' @keywords internal
 prFpGetLegendGrobs <- function(legend, legend.cex, legend.title=NULL){
   lGrobs <- list()
   max_width <- 0
@@ -882,6 +899,7 @@ prFpGetLegendGrobs <- function(legend, legend.cex, legend.title=NULL){
 #' @return \code{void} 
 #' 
 #' @author max
+#' @keywords internal
 prFpDrawLegend <- function (lGrobs, legend.pos, 
                             col, 
                             colgap,
@@ -1046,6 +1064,7 @@ prFpDrawLegend <- function (lGrobs, legend.pos,
 #' @return \code{vector} Contains a min and max value
 #' 
 #' @author Max
+#' @keywords internal
 prFpXrange <- function(upper, lower, clip, zero, xticks, xlog){
   top <- min(max(upper, na.rm = TRUE), clip[2])
   bottom <- max(min(lower, na.rm = TRUE), clip[1])
@@ -1104,6 +1123,7 @@ prFpXrange <- function(upper, lower, clip, zero, xticks, xlog){
 #'  element and max_width/max_height for the total
 #' 
 #' @author max
+#' @keywords internal
 prFpGetLabels <- function(label_type, labeltext, align, 
   nc, nr, 
   is.summary,
@@ -1174,7 +1194,7 @@ prFpGetLabels <- function(label_type, labeltext, align,
   }
   attr(labels, "max_height") <- max_height
   attr(labels, "max_width") <- max_width
-  
+  attr(labels, "cex") <- ifelse(any(is.summary), cex*1.1, cex)
   return(labels)
 }
 
@@ -1190,6 +1210,7 @@ prFpGetLabels <- function(label_type, labeltext, align,
 #' @return An expression or a text
 #' 
 #' @author max
+#' @keywords internal
 prFpFetchRowLabel <- function(label_type, labeltext, i, j){
   if (label_type=="expression"){
     # Haven't figured out it this is possible with 
@@ -1221,25 +1242,33 @@ prFpFetchRowLabel <- function(label_type, labeltext, i, j){
 #' @return \code{viewport} Returns the viewport needed 
 #' 
 #' @author max
+#' @keywords internal
 prFpGetLayoutVP <- function (lineheight, labels, nr, legend_layout = NULL) {
   if (!is.unit(lineheight)){
     if (lineheight == "auto"){
       lvp_height <- unit(1, "npc")
     }else if (lineheight == "lines"){
-      # Use the height of a grob + 50 %
-      lvp_height <- unit(convertUnit(attr(labels, "max_height"), 
-          unitTo="mm", 
-          valueOnly=TRUE)*(nr+.5)*1.5, "mm")
+      lvp_height <- unit(nr*attr(labels, "cex")*1.5, "lines")
     }else{
       stop("The lineheight option '", lineheight, "'is yet not implemented")
     }
   }else{
-    lvp_height <- unit(convertUnit(lineheight, unitTo="npc", valueOnly=TRUE)*(nr+.5), "npc")
+    lvp_height <- unit(convertY(lineheight, 
+                                unitTo="lines",
+                                valueOnly=TRUE)*nr, 
+                       "lines")
+  }
+  
+  # If there is a legend on top then the size should be adjusted
+  if (!is.null(legend_layout) && 
+        legend_layout$nrow == 3 &&
+        convertY(lvp_height, "npc", valueOnly=TRUE) < 1){
+    lvp_height <- sum(lvp_height, legend_layout$heights[1:2])
   }
   
   lvp <- viewport(height=lvp_height,
-    layout = legend_layout,
-    name = ifelse(is.null(legend_layout), "main", "main_and_legend"))
+                  layout = legend_layout,
+                  name = ifelse(is.null(legend_layout), "main", "main_and_legend"))
   return (lvp)
 }
 
@@ -1252,6 +1281,7 @@ prFpGetLayoutVP <- function (lineheight, labels, nr, legend_layout = NULL) {
 #' @return \code{boolean} TRUE or FALSE
 #' 
 #' @author max
+#' @keywords internal
 prFpValidateLabelList <- function(labelList){
   l = length(labelList[[1]])
   if (length(labelList) == 1)
@@ -1298,6 +1328,7 @@ prFpFindWidestGrob <- function (grob.list, return_unit="mm"){
 #'  the correct x/y/adjust values
 #'
 #' @author max
+#' @keywords internal
 prFpGetLegendBoxPosition <- function (legend.pos) {
   valid_txt_pos <- c("bottomright", "bottom", "bottomleft", "left", "topleft", "top", "topright", "right", "center")
   if (!all(c("x", "y") %in% names(legend.pos)) &&
@@ -1380,6 +1411,7 @@ prFpGetLegendBoxPosition <- function (legend.pos) {
 #' @param confintNormalFn The original confintNormalFn input
 #' @return \code{list}
 #' @author Max
+#' @keywords internal
 prFpPrepareLegendMarker <- function (legendMarkerFn, col_no, confintNormalFn) {
   if (is.function(legendMarkerFn)){
     legendMarkerFn <- lapply(1:col_no, function(x) legendMarkerFn)

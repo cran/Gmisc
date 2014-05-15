@@ -30,12 +30,12 @@
 #' @examples
 #' library(grid)
 #' grid.newpage()
-#' arrowGrob <- bezierArrowSmplGradient(x = c(.1,.3,.6,.9),
+#' arrowGrob <- bezierArrowGradient(x = c(.1,.3,.6,.9),
 #'                                      y = c(0.2, 0.2, 0.9, 0.9))
 #' grid.draw(arrowGrob)
 #' @author max
 #' @export
-bezierArrowSmplGradient <- function(
+bezierArrowGradient <- function(
   width = .05,
   clr = "#000000",
   default.units = "npc",
@@ -85,7 +85,9 @@ bezierArrowSmplGradient <- function(
     gp = gp, vp = vp, ...)
 
   if (grdt_start_prop + grdt_decrease_prop == 0){
-    warning("You called the gradient function but did not specify any gradient, why not just use the bezierArrowSmpl function")
+    warning("You called the gradient function but did not",
+            " specify any gradient, why not just use",
+            " the bezierArrowSmpl function")
     return(pg)
   }
     
@@ -96,7 +98,8 @@ bezierArrowSmplGradient <- function(
   end_point <- which(cumsum(bp$lengths) >= sum(bp$lengths)*(grdt_start_prop + grdt_decrease_prop))[1]-2
   start_decrease <- which(cumsum(bp$lengths) >= sum(bp$lengths)*(grdt_start_prop))[1]
   
-  max_gradient_width <- getGridVal(width, default.units) - 2*getGridVal(grdt_line_width, default.units)
+  max_gradient_width <- getGridVal(width, default.units) - 
+    2*getGridVal(grdt_line_width, default.units)
   
   clr_length <- which(cumsum(bp$lengths[end_point:1])/sum(bp$lengths[1:end_point]) >= grdt_clr_prop)[1]
   g_clrs <- colorRampPalette(colors=c(clr, grdt_clr))(clr_length)
@@ -139,7 +142,7 @@ bezierArrowSmplGradient <- function(
   # then there is no decrease
   if (end_point != start_decrease){
     getTriangleGrowth <- function(l){
-      f <- (1-rev(cumsum(l)/sum(l)))
+      f <- (1-rev(cumsum(l)/sum(l)))[-1]
       return(f/max(f))
     }
     g_factor <- getTriangleGrowth(bp$lengths[start_decrease:end_point])
@@ -152,7 +155,7 @@ bezierArrowSmplGradient <- function(
       default.units=default.units,
       perpendicular=TRUE)
     
-    # Draw the left of the triangle
+    # Draw the end of the triangle
     gradient_pg <- polygonGrob(y=unit.c(unit(bp$y[end_point], default.units), 
         base$left[2], 
         base$right[2]),
@@ -242,19 +245,60 @@ bezierArrowSmplGradient <- function(
     
     selection <- which(start_selection)[1]:(start_decrease-1)
     
-    angle <- getVectorAngle(x = bp$x[2],
-      y = bp$y[2],
-      x_origo = bp$x[1],
-      y_origo = bp$y[1],
-      default.units = default.units)
+    # Catch the first turn
+    getDirection <- function(vals){
+      for (i in 2:length(vals)){
+        if (vals[1] != vals[i]){
+          if (vals[1] > vals[i]){
+            return(-1)
+          }else if (vals[1] < vals[i]){
+            return(1)
+          }
+        }
+      }
+      return(0)
+    }
 
+    # Remove those that are lower/higher than the point
+    removeVals <- function(vals, point){
+      direction <- getDirection(vals)
+      for (i in 1:length(vals)){
+        if ((vals[i] - point)*direction > 0){
+          return(vals[-(1:(i-1))])
+        }
+      }
+      return(c())
+    }
+
+    angle <- getVectorAngle(x = bp$x[2],
+                            y = bp$y[2],
+                            x_origo = bp$x[1],
+                            y_origo = bp$y[1])
+    
     w <- getGridVal(grdt_line_width, default.units)
-    st_bp <- list(x=c(getGridVal(end_points$start$x, default.units) + 
-                        w*cos(angle), 
-                      getGridVal(bp$x[selection], default.units)),
-                  y=c(getGridVal(end_points$start$y, default.units) + 
-                        w*sin(angle), 
-                      getGridVal(bp$y[selection], default.units)))
+    st_bp <- list(start_x=getGridVal(end_points$start$x, default.units) + 
+                    w*cos(angle),
+                  start_y=getGridVal(end_points$start$y, default.units) + 
+                    w*sin(angle))
+    
+    
+    # Add the remaining points
+    st_bp$add_x <- removeVals(vals=getGridVal(bp$x[selection], default.units), 
+                              point=st_bp$start_x)
+    st_bp$add_y <- removeVals(vals=getGridVal(bp$y[selection], default.units), 
+                              point=st_bp$start_y)
+    
+    # The two vectors need to be the same - make the larger smaller
+    if (length(st_bp$add_x) < length(st_bp$add_y)){
+      st_bp$add_y <- tail(st_bp$add_y, n=length(st_bp$add_x))
+    }else if (length(st_bp$add_x) > length(st_bp$add_y)){
+      st_bp$add_x <- tail(st_bp$add_x, n=length(st_bp$add_y))
+    }
+    
+    # Now merge into one x and y
+    st_bp$x <- c(st_bp$start_x, st_bp$add_x)
+    st_bp$y <- c(st_bp$start_y, st_bp$add_y)
+    
     st_bp <- lapply(st_bp, function(x) unit(x, default.units))
     
     lines <- getLines(bp=st_bp, 
@@ -266,12 +310,12 @@ bezierArrowSmplGradient <- function(
     
     if (length(g_clrs) > end_point-start_decrease){
       # Continue with gradient polygons if needed
-      for (i in 1:(length(g_clrs) - (end_point-start_decrease))){
+      for (i in 2:(length(g_clrs) - (end_point-start_decrease))){
         top <- base
         base <- list(left = unit.c(tail(lines$left$x, i)[1],
-              tail(lines$left$y, i)[1]),
-          right = unit.c(tail(lines$right$x, i)[1],
-              tail(lines$right$y, i)[1]))
+                                   tail(lines$left$y, i)[1]),
+                     right = unit.c(tail(lines$right$x, i)[1],
+                                    tail(lines$right$y, i)[1]))
         
         current_clr <- g_clrs[end_point - start_decrease + i]
         gradient_pg <- polygonGrob(y=unit.c(top$left[2],

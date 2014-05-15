@@ -1,5 +1,33 @@
 NEWS for the Gmisc package
 
+Changes for 0.6.3
+-------------------
+* Dropped the last versioning number
+
+Changes for 0.6.2.3
+-------------------
+* Roxygen2 v 4.0.0 upgrade + other doc upgrades
+* Percentages are now default without space between the number and the %-sign in order to better comply with English language standards
+
+Changes for 0.6.2.2
+-------------------
+* transitionPlot - fixed arrow size and empty boxes
+* outputInt now defaults to the ',' formatting according to the English language. It also has no-breaking space if html option is set. It can also handle complex vector/matrix input.
+* describeMean now allows for custom plus minus sign
+* describe* now use the outputInt with the default english settings
+* Minor fix for the print.htmlTable
+
+Changes for 0.6.2.1
+-------------------
+* bezierArrowSmplGradient changed name to just bezierArrowGradient
+* Added visual tests and debugged the bezierArrowGradient/transitionPlots
+* Externalized all internal functions of the transitionplot
+* Added proportions for the transitionplot
+* Managed thanks to Baptiste Auguié help on Stack Overflow I know now how to calculate the height of axisGrobs - useful both in the forestplot2 and the transitionPlot functions
+* Fixed the adjustment of the xlabel, the lineheight argument, the viewports for the forestplot2 function
+* Simplified the transitionPlot defaults
+* Fixed a gradient bug in bezierArrowGradient
+
 Changes for 0.6.2.0
 -------------------
 * Added the viewer for htmlTable allowing for direct visualisation in RStudio of the tables. Outside RStudio the utils::browseURL is used.

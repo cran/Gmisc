@@ -12,6 +12,7 @@
 #'  converted if necessary. 
 #' 
 #' @author max
+#' @keywords internal
 validateAndConvertVectorInputs <- function(x, y, 
   x_origo=NA, y_origo=NA){
   # Just som sanity input check
@@ -57,18 +58,18 @@ validateAndConvertVectorInputs <- function(x, y,
 #' @param y The y point of the vector
 #' @param x_origo The x origin if other than 0
 #' @param y_origo The y origin if other than 0
-#' @param default.units As defined by the grid package
 #' @return angle in radians (see \code{\link{atan2}})
 #' 
 #' @author max
+#' @keywords internal
 getVectorAngle <- function(x, y, 
-  x_origo=NA, y_origo=NA, default.units = "mm"){
+                           x_origo=NA, y_origo=NA){
   v <- validateAndConvertVectorInputs(x=x, y=y, 
     x_origo=x_origo, y_origo=y_origo)
   
   if ("unit" %in% class(v$y)){
-    y_diff <- convertY(v$y-v$y_origo, unitTo=default.units, valueOnly=TRUE)
-    x_diff <- convertX(v$x-v$x_origo, unitTo=default.units, valueOnly=TRUE)
+    y_diff <- convertY(v$y-v$y_origo, unitTo="mm", valueOnly=TRUE)
+    x_diff <- convertX(v$x-v$x_origo, unitTo="mm", valueOnly=TRUE)
   }else{
     y_diff <- v$y-v$y_origo
     x_diff <- v$x-v$x_origo
@@ -83,6 +84,7 @@ getVectorAngle <- function(x, y,
 #' @return boolean 
 #' 
 #' @author max
+#' @keywords internal
 isHorizontal <- function(angle_radian){
   if ((angle_radian < pi/4 && angle_radian > -pi/4) ||
       (angle_radian < pi-pi/4 && angle_radian > pi+pi/4))
@@ -110,15 +112,16 @@ isHorizontal <- function(angle_radian){
 #'  and a angle element
 #' 
 #' @author max
+#' @keywords internal
 rotateWidthAccVector <- 
   function (x, y, 
             x_origo=NA, y_origo=NA, 
             default.units,
             ...) {
   v <- validateAndConvertVectorInputs(x=x, y=y, 
-    x_origo=x_origo, y_origo=y_origo)
+                                      x_origo=x_origo, y_origo=y_origo)
   angle <- getVectorAngle(x=x, y=y, 
-    x_origo=x_origo, y_origo=y_origo)
+                          x_origo=x_origo, y_origo=y_origo)
   
   return (rotateWidthAccAngle(angle = angle, 
       x_origo = x_origo,
@@ -149,6 +152,7 @@ rotateWidthAccVector <-
 #'  and a angle element
 #' 
 #' @author max
+#' @keywords internal
 rotateWidthAccAngle <- function (angle, 
   x_origo=NA, y_origo=NA, 
   width = 0, 
@@ -230,6 +234,7 @@ rotateWidthAccAngle <- function (angle,
 #' 
 #' @importFrom sp point.in.polygon
 #' @author max
+#' @keywords internal
 getLines <- function(bp, end_point, 
                      width, default.units, 
                      align_2_axis = TRUE){
@@ -382,9 +387,9 @@ getLines <- function(bp, end_point,
   # If vertical
   if (align_2_axis){
     angle <- getVectorAngle(x_origo=bp$x[1], 
-      y_origo=bp$y[1],
-      x=bp$x[2], 
-      y=bp$y[2])
+                            y_origo=bp$y[1],
+                            x=bp$x[2], 
+                            y=bp$y[2])
     
     adaptLine2LeftTurn <- function(lines, org_offset, default.units, horizontal){
       # left is shorter due to the left skew
@@ -507,6 +512,7 @@ getLines <- function(bp, end_point,
 #' @return A list with left and right elements indicating the two lines 
 #' 
 #' @author max
+#' @keywords internal
 getLinesWithArrow <- function(bp, arrow, end_points, width, default.units, align_2_axis){
   lines <- getLines(bp = bp,
     end_point=end_points$end, 
@@ -555,6 +561,7 @@ getLinesWithArrow <- function(bp, arrow, end_points, width, default.units, align
 #' @return float 
 #' 
 #' @author Max
+#' @keywords internal
 getGridVal <- function(x, default.units, axisTo="x"){
   if("unit" %in% class(x))
     return(convertUnit(x, unitTo=default.units, valueOnly=TRUE, axisTo=axisTo))
