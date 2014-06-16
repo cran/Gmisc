@@ -1,6 +1,6 @@
 Package: Gmisc
-Version: 0.6.2.3
-Date: 2014-05-15
+Version: 0.6.4
+Date: 2014-06-16
 Title: A few handy misc functions for plots, tables, and more
 Author: Max Gordon <max@gforge.se>
 Maintainer: Max Gordon <max@gforge.se>
@@ -23,6 +23,6 @@ Depends: Hmisc
 Suggests: testthat, XML
 Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2014-05-15 10:47:39 UTC; Max
+Packaged: 2014-06-16 14:17:10 UTC; Max
 Repository: CRAN
-Date/Publication: 2014-05-15 16:38:25
+Date/Publication: 2014-06-16 16:40:35

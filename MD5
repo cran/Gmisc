@@ -1,6 +1,6 @@
-5800fccdbbcc0c5f50b4e088984177f1 *DESCRIPTION
-0da712a71f64a6f3d7b9f180a70a28b3 *NAMESPACE
-5cf7dbd6c7c7fbf0908305c2edf05f3c *NEWS
+0bb3ef94cdaa13f0e56321e58906bb84 *DESCRIPTION
+0810d045d110938f84669091844b6822 *NAMESPACE
+72bd9739b37c2b497dfdba6dbf674337 *NEWS
 460630c025724b89297a6dcb75e431fc *R/Gmisc.R
 060bb07e7ddecf3805c79d69ff1f8de8 *R/bezierArrowGradient.R
 2826cf67e095de4fd7e4c81f6c4aa3d6 *R/bezierArrowSmpl.R
@@ -13,7 +13,7 @@ d39f5c34ac8cf5992dc5b8250e1f352e *R/forestplot2.R
 1119b9d804b66dd26254f39c5d49e193 *R/getSvdMostInfluential.R
 b1a06d4df7a5f5726543ac4e499734a3 *R/getTicks.R
 be65d0a41b80bdd2eef58a663128ed2a *R/grid_helpers.R
-a935da726031c62ca94ff8ae6150efa1 *R/htmlTable.R
+9e221d1bd231237ddcd6dfbebfcb9361 *R/htmlTable.R
 a44c6d6ef332fcea6548ce7572753651 *R/insertRowAndKeepAttr.R
 2c2748d7faffe15dccf24782dbe97554 *R/mergeLists.R
 2cfa222338831ca39be5e1f6be0694b9 *R/outputInt.R
@@ -28,7 +28,7 @@ d26087a152c9ab02542f2f2d3844a9dc *inst/examples/bezierArrowSmpl_example.R
 508fb273736a58ae1c300576ee64871d *inst/examples/getDescriptionStatsBy_example.R
 27bfa6349ff7c48ea3a5f57b1243e6ef *inst/examples/getSvdMostInfluential_example.R
 a98d2932d2131e6eae97f24c156cd48f *inst/examples/getTicks_example.R
-bafb241bd0218b88eec2b2da89951616 *inst/examples/htmlTable_example.R
+b4c8b3fb170200165325166727efb560 *inst/examples/htmlTable_example.R
 66cefde1fe5475eeac0939fdf730c2f7 *inst/examples/mergeLists_example.R
 f0e82bd3cd7ef5ee13cdcff08ca585c3 *inst/examples/transitionPlot_example.R
 baf9ca2e8ad669babb0c2c2d0ecadbd5 *man/Gmisc.Rd
@@ -50,7 +50,7 @@ f63fcf9e8e0f5e6872af8e70c1e99d9c *man/getSvdMostInfluential.Rd
 6ec8be1484151e62403e0b7dde1175ab *man/getTicks.Rd
 c437b4af067f9cda68eb3c38608ccc58 *man/getVectorAngle.Rd
 5e955ed7d79473d1ca027f99c02bb5ac *man/heightDetails.xaxis.Rd
-0d1ad1af0b2c0e7ce1add2352246f9fc *man/htmlTable.Rd
+1e7007598ca04117b66a05e2cb16f2a6 *man/htmlTable.Rd
 ebf7d8eb100cb6e7c89c7ab5e6ca72c2 *man/insertRowAndKeepAttr.Rd
 a0c2250ac78acc76913a2186b3d1af73 *man/isHorizontal.Rd
 888c624ba75c56b8c37e3d538a15b2cc *man/mergeLists.Rd
@@ -101,4 +101,5 @@ ed7633fd988df42e795e737c903b1512 *tests/testthat/test-htmlTable.R
 83a6dc606aa42af86695cc61dfe6307c *tests/visual_tests/bezierArrowGradient_vtests.R
 8843d5401d17f0c26d70582dbde83c9e *tests/visual_tests/bezierArrowSmpl_vtests.R
 1e9dab3f07624e8ff8f94741c7efb065 *tests/visual_tests/forestplot2_vtests.R
+70ce4c26d8ec8b5a66577534cca32b81 *tests/visual_tests/htmlTable_vtests.R
 bf95387dd4bb0ff6c9ccc1277b0aad71 *tests/visual_tests/tansitionPlot_vtests.R

@@ -36,6 +36,14 @@
 #' All you need to do is simply set either the \code{title} or the \code{rowlabel}
 #' arguments to get rid of this "bug".
 #' 
+#' As the table uses html for rendering you need to be aware of that headers, 
+#' rownames, and cell values should try respect this for optimal display. Browsers
+#' try to compensate and frequently the tables still turn out OK but it is 
+#' not advized. Most importantly you should try to use 
+#' \code{&lt;} instead of \code{<} and 
+#' \code{&gt;} instead of \code{>}. You can find a complete list 
+#' of html characters \href{http://ascii.cl/htmlcodes.htm}{here}.
+#' 
 #' @param x The matrix/data.frame with the data
 #' @param title The title of the table. Used for labeling etc.
 #' @param headings a vector of character strings specifying column 
@@ -108,6 +116,14 @@
 #'    at Libre Office compatibility. Word-compatibility is difficult as
 #'    Word ignores most settings and destroys all layout attempts 
 #'    (at least that is how my 2010 version behaves).
+#' @param altcol alternating colors for each \code{rgroup}; one or two colors
+#'    is recommended and will be recycled (will throw warning if the number of
+#'    \code{rgroup}s is not a multiple of \code{length(altcol)})
+#' @param tableCSSclass The html CSS class for the table. This allows directing html
+#'    formatting through \href{http://www.w3schools.com/css/css_selectors.asp}{CSS}
+#'    directly at all instances of that class. \emph{Note:} unfortunately the
+#'    CSS is frequently ignored by word processors. This option
+#'    is mostly inteded for web-presentations.
 #' @param ... Currently not used, here for compatibility reasons
 #' @return Returns a string with the output table if output is not set
 #' 
@@ -145,8 +161,19 @@ htmlTable <- function(x,
   caption.loc='top',
   tfoot,
   label,
+  altcol = 'white',
+  tableCSSclass = "gmisc_table",
   ...)
 {
+  ## this will convert color names to hexadecimal (easier for user)
+  ## but also leaves hex format unchanged 
+  altcol <- paste0('#', apply(apply(rbind(col2rgb(altcol)), 
+                                    2, 
+                                    function(x) as.character(as.hexmode(x))),
+                              2, 
+                              paste, collapse = '')
+                   )
+  
   # Unfortunately in knitr there seems to be some issue when the
   # rowname is specified immediately as: rowname=rownames(x) 
   if (missing(rowname)){
@@ -369,7 +396,7 @@ htmlTable <- function(x,
         rgroupCSSseparator[i] <- addSemicolon2StrEnd(rgroupCSSseparator[i])
     }
   }
-
+  
   if (!missing(tspanner)){
     
     # Sanity checks tspannerCSSstyle and prepares the style
@@ -397,7 +424,7 @@ htmlTable <- function(x,
       tspannerCSSseparator <- addSemicolon2StrEnd(tspannerCSSseparator)
       
       if (length(tspanner) > 0)
-        tspannerCSSseparator <- rep(tspannerCSSseparator, length.out=length(tspanner))
+        tspannerCSSseparator <- rep(tspannerCSSseparator, length.out=length(tspanner)-1)
     } else {
       for (i in 1:length(tspannerCSSseparator))
         tspannerCSSseparator[i] <- addSemicolon2StrEnd(tspannerCSSseparator[i])
@@ -612,7 +639,9 @@ htmlTable <- function(x,
   ###############################
   # Start building table string #
   ###############################
-  table_str <- sprintf("<table class='gmisc_table' style='border-collapse: collapse;' %s>", table_id)
+  table_str <- sprintf("<table class='%s' style='border-collapse: collapse;' %s>", 
+                       paste(tableCSSclass, collapse=", "),
+                       table_id)
   
   # Theoretically this should be added to the table but the
   # import to word processors works then less well and therefore I've
@@ -705,6 +734,8 @@ htmlTable <- function(x,
   # Close head and start the body #
   #################################
   table_str <- sprintf("%s\n\t</thead><tbody>", table_str)
+  ## background colors for rows, by rgroup
+  if (!missing(rgroup)){ rs2 <- unlist(Map(rep, altcol, n.rgroup)) }
   
   rgroup_iterator <- 0
   tspanner_iterator <- 0
@@ -755,16 +786,24 @@ htmlTable <- function(x,
       
       # Only add if there is anything in the group
       if (is.na(rgroup[rgroup_iterator]) == FALSE &&
-        rgroup[rgroup_iterator] != ""){
+            rgroup[rgroup_iterator] != ""){
         
-        table_str <- sprintf("%s\n\t<tr><td colspan='%d' style='%s'>%s</td></tr>", table_str, 
-          total_columns, 
-          rs,
-          rgroup[rgroup_iterator])
+        ## this will allow either rgroupCSSstyle or altcol to 
+        ## color the rgroup label rows
+        table_str <- sprintf("%s\n\t<tr style='background-color:%s;'><td colspan='%d' style='%s'>%s</td></tr>", table_str, 
+                             rep(unique(rs2), length(rgroup))[rgroup_iterator],
+                             total_columns, 
+                             rs,
+                             rgroup[rgroup_iterator])
       }
     }
     
-    table_str <- sprintf("%s\n\t<tr>", table_str)
+    if (!missing(rgroup)){
+      ## this will change the bgcolor of the rows, by rgroup
+      table_str <- sprintf("%s\n\t<tr style='background-color:%s;'>", table_str, rs2[row_nr])
+    }else{
+      table_str <- sprintf("%s\n\t<tr>", table_str)
+    }
     cell_style = "";
     if (row_nr == nrow(x))
       cell_style = bottom_row_style
@@ -827,7 +866,7 @@ htmlTable <- function(x,
 setClass("htmlTable", contains = "character")
 
 #' @rdname htmlTable
-#' @method print htmlTable
+#' @S3method print htmlTable
 #' @param useViewer If you are using RStudio there is a viewer thar can render 
 #'  the table within that is automatically envoced unless you have the knitr 
 #'  package loaded. Set this to \code{FALSE} if you want to remove that 
