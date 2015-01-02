@@ -6,12 +6,9 @@
 #' @section Note:
 #' The triangle section of the arrow is not currently included in the gradient.
 #'
-#' @param width The width of the arrow, either a numeric single number or a unit. \strong{Note:}
-#'  The arrow does not rely on lwd but on actual width. Same as in the \code{\link{bezierArrowSmpl}}
-#' @param default.units A string indicating the default units to use width is given as numeric vectors.
+#' @inheritParams grid::bezierGrob
+#' @inheritParams bezierArrowSmpl
 #' @param clr The color of the arrow. This is the main color of the arrow and not the gradient color.
-#' @param align_2_axis Indicates if the arrow should be vertically/horizontally aligned. This
-#'  is useful for instance if the arrow attaches to a box.
 #' @param grdt_type The type of growth and gradient that is to be used,
 #'  currently it only supports triangle (I'm considering adding bezier curves
 #'  but currently I'm a little tired of coding)
@@ -24,10 +21,7 @@
 #'  the original width, note the gradient's width is thus 90 \%.
 #' @param grdt_clr The color of the gradient. It is the color that transits into the clr of the arrow.
 #' @param ... Passed on to \code{\link{bezierArrowSmpl}}
-#' @param gp An object of class gpar, typically the output from a call to the function gpar.
-#'  This is basically a list of graphical parameter settings.
-#' @param vp A \pkg{grid} \code{\link[grid]{viewport}} object (or NULL).
-#' @return A \code{\link[grid]{grob}} of  \code{\link[grid]{gList}}-type
+#' @return \code{grid::gList()} A grob of \code{\link[grid]{gList}}-type
 #'
 #' @examples
 #' library(grid)
