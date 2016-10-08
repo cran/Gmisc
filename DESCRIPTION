@@ -1,6 +1,6 @@
 Package: Gmisc
-Version: 1.4
-Date: 2016-10-01
+Version: 1.4.1
+Date: 2016-10-08
 Title: Descriptive Statistics, Transition Plots, and More
 Author: Max Gordon <max@gforge.se>
 Maintainer: Max Gordon <max@gforge.se>
@@ -22,6 +22,6 @@ NeedsCompilation: no
 VignetteBuilder: knitr
 LinkingTo: Rcpp
 RoxygenNote: 5.0.1
-Packaged: 2016-10-04 13:23:51 UTC; max
+Packaged: 2016-10-08 02:28:40 UTC; max
 Repository: CRAN
-Date/Publication: 2016-10-04 15:33:43
+Date/Publication: 2016-10-08 08:48:01
