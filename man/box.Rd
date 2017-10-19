@@ -2,15 +2,16 @@
 % Please edit documentation in R/boxGrobs.R
 \name{boxGrob}
 \alias{boxGrob}
-\alias{heightDetails.box}
-\alias{plot.box}
-\alias{print.box}
 \alias{widthDetails.box}
+\alias{heightDetails.box}
+\alias{print.box}
+\alias{plot.box}
 \title{Create a box with text}
 \usage{
 boxGrob(label, y = unit(0.5, "npc"), x = unit(0.5, "npc"), width, height,
-  just = "center", bjust = "center", txt_gp = gpar(color = "black"),
-  box_gp = gpar(fill = "#D8F0D1"), name = NULL)
+  just = "center", bjust = "center", txt_gp = getOption("boxGrobTxt",
+  default = gpar(color = "black")), box_gp = getOption("boxGrob", gpar(fill =
+  "#D8F0D1")), name = NULL)
 
 \method{widthDetails}{box}(x)
 
@@ -36,11 +37,13 @@ boxGrob(label, y = unit(0.5, "npc"), x = unit(0.5, "npc"), width, height,
 \item{bjust}{The justification for the box: left, center, right, top or bottom.
 See the \code{just} option for the \code{\link[grid]{viewport}}}
 
-\item{txt_gp}{The \code{\link[grid]{gpar}} style to apply to the text.}
+\item{txt_gp}{The \code{\link[grid]{gpar}} style to apply to the text. Set \code{boxGrobTxt} option
+if you want to customize all the boxes at once.}
 
-\item{box_gp}{The \code{\link[grid]{gpar}} style to apply to the box.}
+\item{box_gp}{The \code{\link[grid]{gpar}} style to apply to the box. Set \code{boxGrob} option
+if you want to customize all the boxes at once.}
 
-\item{name}{a character identifier for the grob. Used to find the grob on the display 
+\item{name}{a character identifier for the grob. Used to find the grob on the display
 list and/or as a child of another grob.}
 
 \item{...}{Passed to \code{\link[grid]{grid.draw}}}
@@ -62,4 +65,3 @@ boxGrob("My box")
 Other box-functions: \code{\link{boxPropGrob}},
   \code{\link{connectGrob}}
 }
-
