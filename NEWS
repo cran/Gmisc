@@ -1,5 +1,14 @@
 NEWS for the Gmisc package
 
+Changes for 1.6.1
+-----------------
+* Removed test for CRAN compliance
+* Changed abs to fabs in bezierArrowFn's c++ code
+
+Changes for 1.6
+-----------------
+* Added skip_shadows to Transition-class
+
 Changes for 1.4.3
 -----------------
 * Fixes non-existing values in different by-groups (issue #24)
