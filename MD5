@@ -1,4 +1,4 @@
-08c8b0809311018b8203e1ec22536db9 *DESCRIPTION
+1ca783480350e16d16b30546aff9f6fd *DESCRIPTION
 c8bdea90282d2f923d265e85c7ec6b49 *NAMESPACE
 bf432da55fd599fd2d92f0afdfb61956 *NEWS
 f9f126995b552db0649ddd1dd095c2e7 *R/Gmisc.R
@@ -31,16 +31,16 @@ a936de7bed7e0d0ddd1224e557cbd158 *R/transitionClass_helpers.R
 ce559af112305b6fc92d0a323c110a31 *build/vignette.rds
 e2c9ca7510e7794a3bac248f5da67486 *inst/doc/Descriptives.R
 230ce8e725511ddc978a4350e730dd3f *inst/doc/Descriptives.Rmd
-0fc07360a39003c79201d02596037c5d *inst/doc/Descriptives.html
+dbfd12a2c2bde337d2094f0e904310e8 *inst/doc/Descriptives.html
 51d84f26c176af1b678d188ddc06eecf *inst/doc/Grid-based_flowcharts.R
 512cfb438fe439f3cec2a6aa2e59bfd1 *inst/doc/Grid-based_flowcharts.Rmd
-d5d928e59c5637ba7e1319ea2026fb1b *inst/doc/Grid-based_flowcharts.html
+652d56e1dc658a9165f200df40abc343 *inst/doc/Grid-based_flowcharts.html
 6cd8a6c9d8a7ab248bd6a50e5a100d1d *inst/doc/Transition-class.R
 feb6da1d698971ab4c969c50b8e5bd89 *inst/doc/Transition-class.Rmd
-9122412894082d8f7c2336564f1086ea *inst/doc/Transition-class.html
+312bbb17fe84f109e2807752ce23ad5b *inst/doc/Transition-class.html
 19075b1eae8c9f3447d9adcde6f7b1eb *inst/doc/transitionPlot.R
 f40b397cfd85bd997cc99e95f8e18476 *inst/doc/transitionPlot.Rmd
-89c304d88137c45f48b1b692a9c9d857 *inst/doc/transitionPlot.html
+a9de6c67b94c9d06e3e6e6f8353813c2 *inst/doc/transitionPlot.html
 3eecd823b6a7442e7ec694bf9ca41293 *inst/examples/bezierArrowGradient_example.R
 eee64f213373e2f9a964df36303c7097 *inst/examples/bezierArrowSmpl_example.R
 e95a938877d42951ddf7524a2e7c705b *inst/examples/connectGrob_example.R
@@ -129,7 +129,6 @@ b501761f8435674ea40f9b599231f74a *src/RcppExports.cpp
 fcaa2d7967921f5730aedad5f567173c *tests/cpp_tests/visual_line_debugging.R
 b415270f59b707adac705bfab5a1515b *tests/performance/bezierArrowProfiler.R
 2f0e34a5909a36bed38f9cc5eb5b5391 *tests/testthat.R
-531c42759abd59f185225dcd717db883 *tests/testthat/Rplots.pdf
 a7c3fc292a65fb69ff0638a3bb3fd3bf *tests/testthat/test-bezier.R
 8d6d2070b3280d73aa44e97744841bd2 *tests/testthat/test-boxGrobs.R
 c894828083b25df61e4556a936bd6efa *tests/testthat/test-copyAllAttributes.R
