@@ -1,5 +1,13 @@
 NEWS for the Gmisc package
 
+Changes for 1.6.4
+-----------------
+* Removed changed constant for STRICT_R_HEADERS compliance
+
+Changes for 1.6.3
+-----------------
+* Fixed minor issue related to new CPP error
+
 Changes for 1.6.1
 -----------------
 * Removed test for CRAN compliance
