@@ -166,3 +166,12 @@ sub_side_right
 odd
 odd2
 
+## ------------------------------------------------------------------------
+grid.newpage()
+boxGrob(expression(bold("Bold text")), 0.8, 0.3)
+boxGrob(expression(italic("Italics text")), 0.8, 0.7)
+boxGrob(expression(paste("Mixed: ", italic("Italics"), " and ", bold("bold"))), 0.6, 0.5)
+boxGrob(expression(paste("y = ", beta[0], " + ", beta[1], X[1], " + ", beta[2], X[2]^2)), 0.35, 0.5)
+boxGrob(expression(paste(beta, gamma, Gamma)), 0.15, 0.5)
+
+
