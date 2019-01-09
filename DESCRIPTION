@@ -1,19 +1,19 @@
 Package: Gmisc
-Version: 1.7
-Date: 2018-11-08
+Version: 1.8
+Date: 2019-01-09
 Title: Descriptive Statistics, Transition Plots, and More
 Author: Max Gordon <max@gforge.se>
 Maintainer: Max Gordon <max@gforge.se>
 Description: Tools for making the descriptive "Table 1" used in medical
-    articles, a transition plot for showing changes between categories, 
-    flow charts by extending the grid package, a method for
-    variable selection based on the SVD, Bézier lines with arrows complementing the
+    articles, a transition plot for showing changes between categories 
+    (also known as a Sankey diagram), flow charts by extending the grid package, 
+    a method for variable selection based on the SVD, Bézier lines with arrows complementing the
     ones in the 'grid' package, and more.
 License: GPL (>= 3)
 URL: http://gforge.se
 BugReports: https://github.com/gforge/Gmisc/issues
 Biarch: yes
-Depends: R (>= 3.2.0), Rcpp (>= 0.11.4), htmlTable (>= 1.1)
+Depends: R (>= 3.2.0), Rcpp (>= 0.11.4), htmlTable (>= 1.13)
 Imports: grid, grDevices, graphics, lattice, Hmisc, forestplot, abind,
         methods, knitr, magrittr, rmarkdown, XML, utils, stats,
         checkmate, stringr
@@ -23,6 +23,6 @@ NeedsCompilation: yes
 VignetteBuilder: knitr
 LinkingTo: Rcpp
 RoxygenNote: 6.1.1
-Packaged: 2018-11-09 07:46:04 UTC; max
+Packaged: 2019-01-09 09:24:29 UTC; max
 Repository: CRAN
-Date/Publication: 2018-11-09 08:20:03 UTC
+Date/Publication: 2019-01-09 16:40:03 UTC

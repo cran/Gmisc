@@ -12,14 +12,14 @@
 
 <meta name="author" content="Max Gordon" />
 
-<meta name="date" content="2018-11-09" />
+<meta name="date" content="2019-01-09" />
 
 <title>The fastest way to compile your Table 1?</title>
 
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
+<style type="text/css" data-origin="pandoc">
 div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
@@ -55,7 +55,29 @@ code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
 code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -70,7 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">The fastest way to compile your Table 1?</h1>
 <h4 class="author"><em>Max Gordon</em></h4>
-<h4 class="date"><em>2018-11-09</em></h4>
+<h4 class="date"><em>2019-01-09</em></h4>
 
 
 <div id="TOC">
@@ -217,10 +239,10 @@ Color
   black
 </td>
 <td style="text-align: center;">
-7 (37%)
+6 (32%)
 </td>
 <td style="text-align: center;">
-6 (46%)
+5 (38%)
 </td>
 </tr>
 <tr>
@@ -228,10 +250,10 @@ Color
   red
 </td>
 <td style="text-align: center;">
-7 (37%)
+10 (53%)
 </td>
 <td style="text-align: center;">
-2 (15%)
+4 (31%)
 </td>
 </tr>
 <tr>
@@ -239,10 +261,10 @@ Color
   silver
 </td>
 <td style="text-align: center;">
-5 (26%)
+3 (16%)
 </td>
 <td style="text-align: center;">
-5 (38%)
+4 (31%)
 </td>
 </tr>
 <tr>
@@ -351,10 +373,10 @@ Color
   black
 </td>
 <td style="text-align: center;">
-7 (37%)
+6 (32%)
 </td>
 <td style="text-align: center;">
-6 (46%)
+5 (38%)
 </td>
 </tr>
 <tr>
@@ -362,10 +384,10 @@ Color
   red
 </td>
 <td style="text-align: center;">
-7 (37%)
+10 (53%)
 </td>
 <td style="text-align: center;">
-2 (15%)
+4 (31%)
 </td>
 </tr>
 <tr>
@@ -373,10 +395,10 @@ Color
   silver
 </td>
 <td style="text-align: center;">
-5 (26%)
+3 (16%)
 </td>
 <td style="text-align: center;">
-5 (38%)
+4 (31%)
 </td>
 </tr>
 <tr>
@@ -512,7 +534,7 @@ Weight†
 Color
 </td>
 <td style="text-align: center;">
-0.44
+0.43
 </td>
 </tr>
 <tr>
@@ -520,10 +542,10 @@ Color
   black
 </td>
 <td style="text-align: center;">
-7 (37%)
+6 (32%)
 </td>
 <td style="text-align: center;">
-6 (46%)
+5 (38%)
 </td>
 <td style="text-align: center;">
 </td>
@@ -533,10 +555,10 @@ Color
   red
 </td>
 <td style="text-align: center;">
-7 (37%)
+10 (53%)
 </td>
 <td style="text-align: center;">
-2 (15%)
+4 (31%)
 </td>
 <td style="text-align: center;">
 </td>
@@ -546,10 +568,10 @@ Color
   silver
 </td>
 <td style="text-align: center;">
-5 (26%)
+3 (16%)
 </td>
 <td style="text-align: center;">
-5 (38%)
+4 (31%)
 </td>
 <td style="text-align: center;">
 </td>
@@ -696,7 +718,7 @@ Weight†
 Color
 </td>
 <td style="text-align: center;">
-0.41
+0.42
 </td>
 </tr>
 <tr>
@@ -704,10 +726,10 @@ Color
   black
 </td>
 <td style="text-align: center;">
-7 (37%)
+6 (32%)
 </td>
 <td style="text-align: center;">
-6 (46%)
+5 (38%)
 </td>
 <td style="text-align: center;">
 </td>
@@ -717,10 +739,10 @@ Color
   red
 </td>
 <td style="text-align: center;">
-7 (37%)
+10 (53%)
 </td>
 <td style="text-align: center;">
-2 (15%)
+4 (31%)
 </td>
 <td style="text-align: center;">
 </td>
@@ -730,10 +752,10 @@ Color
   silver
 </td>
 <td style="text-align: center;">
-5 (26%)
+3 (16%)
 </td>
 <td style="text-align: center;">
-5 (38%)
+4 (31%)
 </td>
 <td style="text-align: center;">
 </td>
