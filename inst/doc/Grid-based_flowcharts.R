@@ -1,7 +1,7 @@
-## ----setup, include=FALSE------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 
-## ----basic_plot, fig.height=2, fig.width=2-------------------------------
+## ----basic_plot, fig.height=2, fig.width=2------------------------------------
 # Load the grid library
 # part of standard R libraries so no need installing
 library(grid)  
@@ -15,7 +15,7 @@ grid.rect(gp=gpar(fill="#D8F0D1"))
 
 popViewport()
 
-## ----relative_lines, fig.height=3, fig.width=3---------------------------
+## ----relative_lines, fig.height=3, fig.width=3--------------------------------
 grid.newpage()
 pushViewport(viewport(width=.5, height=.8, clip="on"))
 grid.rect(gp=gpar(lty=2, fill="lightyellow"))
@@ -28,7 +28,7 @@ grid.rect(gp=gpar(fill="lightblue")) # A translucent box to indicate the new vie
 grid.draw(lg)
 popViewport()
 
-## ----absolute_lines, fig.height=3, fig.width=3---------------------------
+## ----absolute_lines, fig.height=3, fig.width=3--------------------------------
 grid.newpage()
 pushViewport(viewport(width=.5, height=.8, clip="on"))
 grid.rect(gp=gpar(lty=2, fill="lightyellow"))
@@ -41,7 +41,7 @@ grid.rect(gp=gpar(fill="lightblue")) # A translucent box to indicate the new vie
 grid.draw(lg)
 popViewport()
 
-## ----basic_box, fig.height=1.5, fig.width=3, message=FALSE---------------
+## ----basic_box, fig.height=1.5, fig.width=3, message=FALSE--------------------
 library(Gmisc)
 grid.newpage()
 txt <- 
@@ -50,7 +50,7 @@ with some text
 - Note that newline is OK"
 boxGrob(txt)
 
-## ----styled_box, fig.height=3, fig.width=3-------------------------------
+## ----styled_box, fig.height=3, fig.width=3------------------------------------
 grid.newpage()
 boxGrob("A large\noffset\nyellow\nbox", 
         width=.8, height=.8, 
@@ -59,13 +59,13 @@ boxGrob("A large\noffset\nyellow\nbox",
         txt_gp = gpar(col="darkblue", cex=2),
         box_gp = gpar(fill="lightyellow", col="darkblue"))
 
-## ----prop_box, fig.height=2, fig.width=4---------------------------------
+## ----prop_box, fig.height=2, fig.width=4--------------------------------------
 grid.newpage()
 boxPropGrob("A box with proportions", 
             "Left side", "Right side",
             prop=.7)
 
-## ---- fig.height=3, fig.width=4------------------------------------------
+## ---- fig.height=3, fig.width=4-----------------------------------------------
 grid.newpage()
 smpl_bx <- boxGrob(
   label = "A simple box",
@@ -105,7 +105,7 @@ grid.circle(y = prop_bx_coords$bottom, x = prop_bx_coords$left, r = unit(2, "mm"
 grid.circle(y = prop_bx_coords$top, x = prop_bx_coords$left, r = unit(2, "mm"), gp=gpar(fill="orange"))
 
 
-## ----"Connected boxes", fig.width=7, fig.height=5------------------------
+## ----"Connected boxes", fig.width=7, fig.height=5-----------------------------
 grid.newpage()
 
 # Initiate the boxes that we want to connect
@@ -166,7 +166,7 @@ sub_side_right
 odd
 odd2
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 grid.newpage()
 boxGrob(expression(bold("Bold text")), 0.8, 0.3)
 boxGrob(expression(italic("Italics text")), 0.8, 0.7)

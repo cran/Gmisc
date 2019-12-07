@@ -1,4 +1,4 @@
-## ---- message=FALSE------------------------------------------------------
+## ---- message=FALSE-----------------------------------------------------------
 data(mtcars)
 # For labelling we use the label()
 # function from the Hmisc package
@@ -21,17 +21,17 @@ mtcars$col <- factor(sample(c("red", "black", "silver"),
                      size=NROW(mtcars), replace=TRUE))
 label(mtcars$col) <- "Car color"
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(Gmisc)
 getDescriptionStatsBy(x = mtcars$mpg, 
                       by = mtcars$am)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 getDescriptionStatsBy(x = mtcars$mpg, 
                       by = mtcars$am,
                       continuous_fn = describeMedian)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 getTable1Stats <- function(x, digits = 0, ...){
   getDescriptionStatsBy(x = x, 
                         by = mtcars$am,
@@ -43,10 +43,10 @@ getTable1Stats <- function(x, digits = 0, ...){
 }
 getTable1Stats(mtcars$mpg)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 getTable1Stats(mtcars$mpg, use_units = TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 t1 <- list()
 t1[["Gas"]] <-
   getTable1Stats(mtcars$mpg)
@@ -67,7 +67,7 @@ mergeDesc(t1,
                                 caption  = "Basic descriptive statistics from the mtcars dataset",
                                 tfoot = "&dagger; The weight is in 10<sup>3</sup> kg"))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 mergeDesc(getTable1Stats(mtcars$mpg),
           `Weight&dagger;` = getTable1Stats(mtcars$wt),
           Color = getTable1Stats(mtcars$col),
@@ -76,7 +76,7 @@ mergeDesc(getTable1Stats(mtcars$mpg),
                                 caption  = "Basic descriptive statistics from the mtcars dataset",
                                 tfoot = "&dagger; The weight is in 10<sup>3</sup> kg"))
 
-## ---- warning=FALSE------------------------------------------------------
+## ---- warning=FALSE-----------------------------------------------------------
 getTable1Stats <- function(x, digits = 0, ...){
   getDescriptionStatsBy(x = x, 
                         by = mtcars$am,
@@ -105,7 +105,7 @@ mergeDesc(t1,
             caption  = "Basic descriptive statistics from the mtcars dataset",
             tfoot = "&dagger; The weight is in 10<sup>3</sup> kg")
 
-## ---- warning=FALSE------------------------------------------------------
+## ---- warning=FALSE-----------------------------------------------------------
 getTable1Stats <- function(x, digits = 0, ...){
   getDescriptionStatsBy(x = x, 
                         by = mtcars$am,
