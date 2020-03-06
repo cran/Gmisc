@@ -8,11 +8,11 @@
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Max Gordon" />
 
-<meta name="date" content="2019-12-07" />
+<meta name="date" content="2020-03-06" />
 
 <title>The fastest way to compile your Table 1?</title>
 
@@ -37,7 +37,7 @@ a.sourceLine { text-indent: -1em; padding-left: 1em; }
 pre.numberSource a.sourceLine
   { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
-  { content: attr(title);
+  { content: attr(data-line-number);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
     border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
@@ -281,7 +281,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; } </style>
 
 <h1 class="title toc-ignore">The fastest way to compile your Table 1?</h1>
 <h4 class="author">Max Gordon</h4>
-<h4 class="date">2019-12-07</h4>
+<h4 class="date">2020-03-06</h4>
 
 
 <div id="TOC">
@@ -296,61 +296,61 @@ code > span.er { color: #a61717; background-color: #e3d2d2; } </style>
 
 <p>The purpose of the first table in a medical paper is most often to describe your population. In an RCT the table frequently compares the baseline characteristics between the randomized groups, while an observational study will often compare exposed with unexposed. In this vignette I will show how I use the functions to quickly generate a descriptive table.</p>
 <p>We will use the mtcars dataset and compare the groups with automatic transmission to those without. First we will start by loading the dataset and labeling.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">data</span>(mtcars)</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="co"># For labelling we use the label()</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co"># function from the Hmisc package</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="kw">library</span>(Hmisc)</a>
-<a class="sourceLine" id="cb1-5" title="5"></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="kw">label</span>(mtcars<span class="op">$</span>mpg) &lt;-<span class="st"> &quot;Gas&quot;</span></a>
-<a class="sourceLine" id="cb1-7" title="7"><span class="kw">units</span>(mtcars<span class="op">$</span>mpg) &lt;-<span class="st"> &quot;Miles/(US) gallon&quot;</span></a>
-<a class="sourceLine" id="cb1-8" title="8"></a>
-<a class="sourceLine" id="cb1-9" title="9"><span class="kw">label</span>(mtcars<span class="op">$</span>wt) &lt;-<span class="st"> &quot;Weight&quot;</span></a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="kw">units</span>(mtcars<span class="op">$</span>wt) &lt;-<span class="st"> &quot;10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span> <span class="co"># not sure the unit is correct</span></a>
-<a class="sourceLine" id="cb1-11" title="11"></a>
-<a class="sourceLine" id="cb1-12" title="12">mtcars<span class="op">$</span>am &lt;-<span class="st"> </span><span class="kw">factor</span>(mtcars<span class="op">$</span>am, <span class="dt">levels=</span><span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Automatic&quot;</span>, <span class="st">&quot;Manual&quot;</span>))</a>
-<a class="sourceLine" id="cb1-13" title="13"><span class="kw">label</span>(mtcars<span class="op">$</span>am) &lt;-<span class="st"> &quot;Transmission&quot;</span></a>
-<a class="sourceLine" id="cb1-14" title="14"></a>
-<a class="sourceLine" id="cb1-15" title="15">mtcars<span class="op">$</span>gear &lt;-<span class="st"> </span><span class="kw">factor</span>(mtcars<span class="op">$</span>gear)</a>
-<a class="sourceLine" id="cb1-16" title="16"><span class="kw">label</span>(mtcars<span class="op">$</span>gear) &lt;-<span class="st"> &quot;Gears&quot;</span></a>
-<a class="sourceLine" id="cb1-17" title="17"></a>
-<a class="sourceLine" id="cb1-18" title="18"><span class="co"># Make up some data for making it slightly more interesting</span></a>
-<a class="sourceLine" id="cb1-19" title="19">mtcars<span class="op">$</span>col &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">sample</span>(<span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;black&quot;</span>, <span class="st">&quot;silver&quot;</span>),</a>
-<a class="sourceLine" id="cb1-20" title="20">                     <span class="dt">size=</span><span class="kw">NROW</span>(mtcars), <span class="dt">replace=</span><span class="ot">TRUE</span>))</a>
-<a class="sourceLine" id="cb1-21" title="21"><span class="kw">label</span>(mtcars<span class="op">$</span>col) &lt;-<span class="st"> &quot;Car color&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">data</span>(mtcars)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co"># For labelling we use the label()</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co"># function from the Hmisc package</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(Hmisc)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw">label</span>(mtcars<span class="op">$</span>mpg) &lt;-<span class="st"> &quot;Gas&quot;</span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw">units</span>(mtcars<span class="op">$</span>mpg) &lt;-<span class="st"> &quot;Miles/(US) gallon&quot;</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="kw">label</span>(mtcars<span class="op">$</span>wt) &lt;-<span class="st"> &quot;Weight&quot;</span></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="kw">units</span>(mtcars<span class="op">$</span>wt) &lt;-<span class="st"> &quot;10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span> <span class="co"># not sure the unit is correct</span></a>
+<a class="sourceLine" id="cb1-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12">mtcars<span class="op">$</span>am &lt;-<span class="st"> </span><span class="kw">factor</span>(mtcars<span class="op">$</span>am, <span class="dt">levels=</span><span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Automatic&quot;</span>, <span class="st">&quot;Manual&quot;</span>))</a>
+<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="kw">label</span>(mtcars<span class="op">$</span>am) &lt;-<span class="st"> &quot;Transmission&quot;</span></a>
+<a class="sourceLine" id="cb1-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb1-15" data-line-number="15">mtcars<span class="op">$</span>gear &lt;-<span class="st"> </span><span class="kw">factor</span>(mtcars<span class="op">$</span>gear)</a>
+<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="kw">label</span>(mtcars<span class="op">$</span>gear) &lt;-<span class="st"> &quot;Gears&quot;</span></a>
+<a class="sourceLine" id="cb1-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb1-18" data-line-number="18"><span class="co"># Make up some data for making it slightly more interesting</span></a>
+<a class="sourceLine" id="cb1-19" data-line-number="19">mtcars<span class="op">$</span>col &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">sample</span>(<span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;black&quot;</span>, <span class="st">&quot;silver&quot;</span>),</a>
+<a class="sourceLine" id="cb1-20" data-line-number="20">                     <span class="dt">size=</span><span class="kw">NROW</span>(mtcars), <span class="dt">replace=</span><span class="ot">TRUE</span>))</a>
+<a class="sourceLine" id="cb1-21" data-line-number="21"><span class="kw">label</span>(mtcars<span class="op">$</span>col) &lt;-<span class="st"> &quot;Car color&quot;</span></a></code></pre></div>
 <div id="the-basics-of-getdescriptionstatsby" class="section level1">
 <h1>The basics of getDescriptionStatsBy</h1>
 <p>The function <code>getDescriptionStatsBy</code> is a simple way to do basic descriptive statistics. Mandatory inputs are the first two, <em>x</em> and <em>by</em>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">library</span>(Gmisc)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(Gmisc)</a></code></pre></div>
 <pre><code>## Loading required package: Rcpp</code></pre>
 <pre><code>## Loading required package: htmlTable</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">getDescriptionStatsBy</span>(<span class="dt">x =</span> mtcars<span class="op">$</span>mpg, </a>
-<a class="sourceLine" id="cb5-2" title="2">                      <span class="dt">by =</span> mtcars<span class="op">$</span>am)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">getDescriptionStatsBy</span>(<span class="dt">x =</span> mtcars<span class="op">$</span>mpg, </a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">                      <span class="dt">by =</span> mtcars<span class="op">$</span>am)</a></code></pre></div>
 <pre><code>## Gas 
 ##     Automatic            Manual              
 ## Gas &quot;17.1 (&amp;plusmn;3.8)&quot; &quot;24.4 (&amp;plusmn;6.2)&quot;</code></pre>
 <p>If we prefer median we can simply specify the statistic used with continuous variables:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">getDescriptionStatsBy</span>(<span class="dt">x =</span> mtcars<span class="op">$</span>mpg, </a>
-<a class="sourceLine" id="cb7-2" title="2">                      <span class="dt">by =</span> mtcars<span class="op">$</span>am,</a>
-<a class="sourceLine" id="cb7-3" title="3">                      <span class="dt">continuous_fn =</span> describeMedian)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">getDescriptionStatsBy</span>(<span class="dt">x =</span> mtcars<span class="op">$</span>mpg, </a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">                      <span class="dt">by =</span> mtcars<span class="op">$</span>am,</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">                      <span class="dt">continuous_fn =</span> describeMedian)</a></code></pre></div>
 <pre><code>## Gas 
 ##     Automatic            Manual              
 ## Gas &quot;17.3 (14.9 - 19.2)&quot; &quot;22.8 (21.0 - 30.4)&quot;</code></pre>
 <p>As I always have the same <em>by</em>-variable and have several customization, I often wire a small wrapper:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">getTable1Stats &lt;-<span class="st"> </span><span class="cf">function</span>(x, <span class="dt">digits =</span> <span class="dv">0</span>, ...){</a>
-<a class="sourceLine" id="cb9-2" title="2">  <span class="kw">getDescriptionStatsBy</span>(<span class="dt">x =</span> x, </a>
-<a class="sourceLine" id="cb9-3" title="3">                        <span class="dt">by =</span> mtcars<span class="op">$</span>am,</a>
-<a class="sourceLine" id="cb9-4" title="4">                        <span class="dt">digits =</span> digits,</a>
-<a class="sourceLine" id="cb9-5" title="5">                        <span class="dt">continuous_fn =</span> describeMedian,</a>
-<a class="sourceLine" id="cb9-6" title="6">                        <span class="dt">header_count =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb9-7" title="7">                        ...)</a>
-<a class="sourceLine" id="cb9-8" title="8">  </a>
-<a class="sourceLine" id="cb9-9" title="9">}</a>
-<a class="sourceLine" id="cb9-10" title="10"><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">getTable1Stats &lt;-<span class="st"> </span><span class="cf">function</span>(x, <span class="dt">digits =</span> <span class="dv">0</span>, ...){</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">  <span class="kw">getDescriptionStatsBy</span>(<span class="dt">x =</span> x, </a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">                        <span class="dt">by =</span> mtcars<span class="op">$</span>am,</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">                        <span class="dt">digits =</span> digits,</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">                        <span class="dt">continuous_fn =</span> describeMedian,</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">                        <span class="dt">header_count =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">                        ...)</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8">  </a>
+<a class="sourceLine" id="cb9-9" data-line-number="9">}</a>
+<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg)</a></code></pre></div>
 <pre><code>## Gas 
 ##     Automatic&lt;br /&gt;\n No. 19 Manual&lt;br /&gt;\n No. 13
 ## Gas &quot;17 (15 - 19)&quot;           &quot;23 (21 - 30)&quot;</code></pre>
 <p>The dot-argument (…) is useful for adding additional customization:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg, <span class="dt">use_units =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg, <span class="dt">use_units =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>## Gas 
 ##     Automatic&lt;br /&gt;\n No. 19 Manual&lt;br /&gt;\n No. 13 units              
 ## Gas &quot;17 (15 - 19)&quot;           &quot;23 (21 - 30)&quot;        &quot;Miles/(US) gallon&quot;</code></pre>
@@ -358,25 +358,25 @@ code > span.er { color: #a61717; background-color: #e3d2d2; } </style>
 <div id="magic-with-mergedesc" class="section level1">
 <h1>Magic with <strong>mergeDesc</strong></h1>
 <p>In order to quickly assemble a “Table 1” I’ve generated a helper function <code>mergeDesc</code> that closely integrates with the <code>htmlTable</code>:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">t1 &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
-<a class="sourceLine" id="cb13-2" title="2">t1[[<span class="st">&quot;Gas&quot;</span>]] &lt;-</a>
-<a class="sourceLine" id="cb13-3" title="3"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg)</a>
-<a class="sourceLine" id="cb13-4" title="4">  </a>
-<a class="sourceLine" id="cb13-5" title="5">t1[[<span class="st">&quot;Weight&amp;dagger;&quot;</span>]] &lt;-</a>
-<a class="sourceLine" id="cb13-6" title="6"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>wt)</a>
-<a class="sourceLine" id="cb13-7" title="7"></a>
-<a class="sourceLine" id="cb13-8" title="8">t1[[<span class="st">&quot;Color&quot;</span>]] &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb13-9" title="9"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>col)</a>
-<a class="sourceLine" id="cb13-10" title="10"></a>
-<a class="sourceLine" id="cb13-11" title="11"><span class="co"># If we want to use the labels set in the beginning</span></a>
-<a class="sourceLine" id="cb13-12" title="12"><span class="co"># we add an element without a name</span></a>
-<a class="sourceLine" id="cb13-13" title="13">t1 &lt;-<span class="st"> </span><span class="kw">c</span>(t1,</a>
-<a class="sourceLine" id="cb13-14" title="14">        <span class="kw">list</span>(<span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>gear)))</a>
-<a class="sourceLine" id="cb13-15" title="15"></a>
-<a class="sourceLine" id="cb13-16" title="16"><span class="kw">mergeDesc</span>(t1,</a>
-<a class="sourceLine" id="cb13-17" title="17">          <span class="dt">htmlTable_args =</span> <span class="kw">list</span>(<span class="dt">css.rgroup =</span> <span class="st">&quot;&quot;</span>,</a>
-<a class="sourceLine" id="cb13-18" title="18">                                <span class="dt">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</a>
-<a class="sourceLine" id="cb13-19" title="19">                                <span class="dt">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">t1 &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">t1[[<span class="st">&quot;Gas&quot;</span>]] &lt;-</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg)</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">  </a>
+<a class="sourceLine" id="cb13-5" data-line-number="5">t1[[<span class="st">&quot;Weight&amp;dagger;&quot;</span>]] &lt;-</a>
+<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>wt)</a>
+<a class="sourceLine" id="cb13-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb13-8" data-line-number="8">t1[[<span class="st">&quot;Color&quot;</span>]] &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>col)</a>
+<a class="sourceLine" id="cb13-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co"># If we want to use the labels set in the beginning</span></a>
+<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co"># we add an element without a name</span></a>
+<a class="sourceLine" id="cb13-13" data-line-number="13">t1 &lt;-<span class="st"> </span><span class="kw">c</span>(t1,</a>
+<a class="sourceLine" id="cb13-14" data-line-number="14">        <span class="kw">list</span>(<span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>gear)))</a>
+<a class="sourceLine" id="cb13-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb13-16" data-line-number="16"><span class="kw">mergeDesc</span>(t1,</a>
+<a class="sourceLine" id="cb13-17" data-line-number="17">          <span class="dt">htmlTable_args =</span> <span class="kw">list</span>(<span class="dt">css.rgroup =</span> <span class="st">&quot;&quot;</span>,</a>
+<a class="sourceLine" id="cb13-18" data-line-number="18">                                <span class="dt">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</a>
+<a class="sourceLine" id="cb13-19" data-line-number="19">                                <span class="dt">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>))</a></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
@@ -428,10 +428,10 @@ Color
   black
 </td>
 <td style="text-align: center;">
-6 (32%)
+4 (21%)
 </td>
 <td style="text-align: center;">
-7 (54%)
+3 (23%)
 </td>
 </tr>
 <tr>
@@ -439,10 +439,10 @@ Color
   red
 </td>
 <td style="text-align: center;">
-5 (26%)
+8 (42%)
 </td>
 <td style="text-align: center;">
-5 (38%)
+4 (31%)
 </td>
 </tr>
 <tr>
@@ -450,10 +450,10 @@ Color
   silver
 </td>
 <td style="text-align: center;">
-8 (42%)
+7 (37%)
 </td>
 <td style="text-align: center;">
-1 (8%)
+6 (46%)
 </td>
 </tr>
 <tr>
@@ -504,13 +504,13 @@ Gears
 </tfoot>
 </table>
 <p>I like generating lists but it is optional, you can achieve the same through:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw">mergeDesc</span>(<span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg),</a>
-<a class="sourceLine" id="cb14-2" title="2">          <span class="st">`</span><span class="dt">Weight&amp;dagger;</span><span class="st">`</span> =<span class="st"> </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>wt),</a>
-<a class="sourceLine" id="cb14-3" title="3">          <span class="dt">Color =</span> <span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>col),</a>
-<a class="sourceLine" id="cb14-4" title="4">          <span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>gear),</a>
-<a class="sourceLine" id="cb14-5" title="5">          <span class="dt">htmlTable_args =</span> <span class="kw">list</span>(<span class="dt">css.rgroup =</span> <span class="st">&quot;&quot;</span>,</a>
-<a class="sourceLine" id="cb14-6" title="6">                                <span class="dt">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</a>
-<a class="sourceLine" id="cb14-7" title="7">                                <span class="dt">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">mergeDesc</span>(<span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg),</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">          <span class="st">`</span><span class="dt">Weight&amp;dagger;</span><span class="st">`</span> =<span class="st"> </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>wt),</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">          <span class="dt">Color =</span> <span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>col),</a>
+<a class="sourceLine" id="cb14-4" data-line-number="4">          <span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>gear),</a>
+<a class="sourceLine" id="cb14-5" data-line-number="5">          <span class="dt">htmlTable_args =</span> <span class="kw">list</span>(<span class="dt">css.rgroup =</span> <span class="st">&quot;&quot;</span>,</a>
+<a class="sourceLine" id="cb14-6" data-line-number="6">                                <span class="dt">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</a>
+<a class="sourceLine" id="cb14-7" data-line-number="7">                                <span class="dt">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>))</a></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
@@ -562,10 +562,10 @@ Color
   black
 </td>
 <td style="text-align: center;">
-6 (32%)
+4 (21%)
 </td>
 <td style="text-align: center;">
-7 (54%)
+3 (23%)
 </td>
 </tr>
 <tr>
@@ -573,10 +573,10 @@ Color
   red
 </td>
 <td style="text-align: center;">
-5 (26%)
+8 (42%)
 </td>
 <td style="text-align: center;">
-5 (38%)
+4 (31%)
 </td>
 </tr>
 <tr>
@@ -584,10 +584,10 @@ Color
   silver
 </td>
 <td style="text-align: center;">
-8 (42%)
+7 (37%)
 </td>
 <td style="text-align: center;">
-1 (8%)
+6 (46%)
 </td>
 </tr>
 <tr>
@@ -641,33 +641,33 @@ Gears
 <div id="p-values" class="section level1">
 <h1>P-values</h1>
 <p>Event though p-values are discouraged in the Table 1, they are <a href="http://cpr.sagepub.com/content/19/2/231.full">not uncommon</a>. I have therefore added basic statistics consisting that defaults to Fisher’s exact test for proportions and Wilcoxon rank sum test for continuous values.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">getTable1Stats &lt;-<span class="st"> </span><span class="cf">function</span>(x, <span class="dt">digits =</span> <span class="dv">0</span>, ...){</a>
-<a class="sourceLine" id="cb15-2" title="2">  <span class="kw">getDescriptionStatsBy</span>(<span class="dt">x =</span> x, </a>
-<a class="sourceLine" id="cb15-3" title="3">                        <span class="dt">by =</span> mtcars<span class="op">$</span>am,</a>
-<a class="sourceLine" id="cb15-4" title="4">                        <span class="dt">digits =</span> digits,</a>
-<a class="sourceLine" id="cb15-5" title="5">                        <span class="dt">continuous_fn =</span> describeMedian,</a>
-<a class="sourceLine" id="cb15-6" title="6">                        <span class="dt">header_count =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb15-7" title="7">                        <span class="dt">statistics =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb15-8" title="8">                        ...)</a>
-<a class="sourceLine" id="cb15-9" title="9">  </a>
-<a class="sourceLine" id="cb15-10" title="10">}</a>
-<a class="sourceLine" id="cb15-11" title="11"></a>
-<a class="sourceLine" id="cb15-12" title="12">t1 &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
-<a class="sourceLine" id="cb15-13" title="13">t1[[<span class="st">&quot;Gas&quot;</span>]] &lt;-</a>
-<a class="sourceLine" id="cb15-14" title="14"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg)</a>
-<a class="sourceLine" id="cb15-15" title="15">  </a>
-<a class="sourceLine" id="cb15-16" title="16">t1[[<span class="st">&quot;Weight&amp;dagger;&quot;</span>]] &lt;-</a>
-<a class="sourceLine" id="cb15-17" title="17"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>wt)</a>
-<a class="sourceLine" id="cb15-18" title="18"></a>
-<a class="sourceLine" id="cb15-19" title="19">t1[[<span class="st">&quot;Color&quot;</span>]] &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb15-20" title="20"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>col)</a>
-<a class="sourceLine" id="cb15-21" title="21"></a>
-<a class="sourceLine" id="cb15-22" title="22"><span class="kw">library</span>(magrittr)</a>
-<a class="sourceLine" id="cb15-23" title="23"><span class="kw">mergeDesc</span>(t1,</a>
-<a class="sourceLine" id="cb15-24" title="24">          <span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>gear)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-25" title="25"><span class="st">  </span><span class="kw">htmlTable</span>(<span class="dt">css.rgroup =</span> <span class="st">&quot;&quot;</span>,</a>
-<a class="sourceLine" id="cb15-26" title="26">            <span class="dt">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</a>
-<a class="sourceLine" id="cb15-27" title="27">            <span class="dt">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">getTable1Stats &lt;-<span class="st"> </span><span class="cf">function</span>(x, <span class="dt">digits =</span> <span class="dv">0</span>, ...){</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">  <span class="kw">getDescriptionStatsBy</span>(<span class="dt">x =</span> x, </a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">                        <span class="dt">by =</span> mtcars<span class="op">$</span>am,</a>
+<a class="sourceLine" id="cb15-4" data-line-number="4">                        <span class="dt">digits =</span> digits,</a>
+<a class="sourceLine" id="cb15-5" data-line-number="5">                        <span class="dt">continuous_fn =</span> describeMedian,</a>
+<a class="sourceLine" id="cb15-6" data-line-number="6">                        <span class="dt">header_count =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb15-7" data-line-number="7">                        <span class="dt">statistics =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb15-8" data-line-number="8">                        ...)</a>
+<a class="sourceLine" id="cb15-9" data-line-number="9">  </a>
+<a class="sourceLine" id="cb15-10" data-line-number="10">}</a>
+<a class="sourceLine" id="cb15-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb15-12" data-line-number="12">t1 &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb15-13" data-line-number="13">t1[[<span class="st">&quot;Gas&quot;</span>]] &lt;-</a>
+<a class="sourceLine" id="cb15-14" data-line-number="14"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg)</a>
+<a class="sourceLine" id="cb15-15" data-line-number="15">  </a>
+<a class="sourceLine" id="cb15-16" data-line-number="16">t1[[<span class="st">&quot;Weight&amp;dagger;&quot;</span>]] &lt;-</a>
+<a class="sourceLine" id="cb15-17" data-line-number="17"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>wt)</a>
+<a class="sourceLine" id="cb15-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb15-19" data-line-number="19">t1[[<span class="st">&quot;Color&quot;</span>]] &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb15-20" data-line-number="20"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>col)</a>
+<a class="sourceLine" id="cb15-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb15-22" data-line-number="22"><span class="kw">library</span>(magrittr)</a>
+<a class="sourceLine" id="cb15-23" data-line-number="23"><span class="kw">mergeDesc</span>(t1,</a>
+<a class="sourceLine" id="cb15-24" data-line-number="24">          <span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>gear)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb15-25" data-line-number="25"><span class="st">  </span><span class="kw">htmlTable</span>(<span class="dt">css.rgroup =</span> <span class="st">&quot;&quot;</span>,</a>
+<a class="sourceLine" id="cb15-26" data-line-number="26">            <span class="dt">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</a>
+<a class="sourceLine" id="cb15-27" data-line-number="27">            <span class="dt">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>)</a></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
@@ -723,7 +723,7 @@ Weight†
 Color
 </td>
 <td style="text-align: center;">
-0.11
+0.90
 </td>
 </tr>
 <tr>
@@ -731,10 +731,10 @@ Color
   black
 </td>
 <td style="text-align: center;">
-6 (32%)
+4 (21%)
 </td>
 <td style="text-align: center;">
-7 (54%)
+3 (23%)
 </td>
 <td style="text-align: center;">
 </td>
@@ -744,10 +744,10 @@ Color
   red
 </td>
 <td style="text-align: center;">
-5 (26%)
+8 (42%)
 </td>
 <td style="text-align: center;">
-5 (38%)
+4 (31%)
 </td>
 <td style="text-align: center;">
 </td>
@@ -757,10 +757,10 @@ Color
   silver
 </td>
 <td style="text-align: center;">
-8 (42%)
+7 (37%)
 </td>
 <td style="text-align: center;">
-1 (8%)
+6 (46%)
 </td>
 <td style="text-align: center;">
 </td>
@@ -823,35 +823,35 @@ Gears
 </table>
 <div id="custom-p-values" class="section level2">
 <h2>Custom p-values</h2>
-<p>By popular demand I’ve expanded with the option of having custom p-values. All you need to do is to provide a function that takes two values and exports a single p-value. There are several prepared functions that you can use or use as a template for your own p-value function. They all start with <code>getPval..</code>, e.g. <code>getPvalKruskal</code>. You can either provide a single function or you can set the defaults depending on the variable type:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">getTable1Stats &lt;-<span class="st"> </span><span class="cf">function</span>(x, <span class="dt">digits =</span> <span class="dv">0</span>, ...){</a>
-<a class="sourceLine" id="cb16-2" title="2">  <span class="kw">getDescriptionStatsBy</span>(<span class="dt">x =</span> x, </a>
-<a class="sourceLine" id="cb16-3" title="3">                        <span class="dt">by =</span> mtcars<span class="op">$</span>am,</a>
-<a class="sourceLine" id="cb16-4" title="4">                        <span class="dt">digits =</span> digits,</a>
-<a class="sourceLine" id="cb16-5" title="5">                        <span class="dt">continuous_fn =</span> describeMedian,</a>
-<a class="sourceLine" id="cb16-6" title="6">                        <span class="dt">header_count =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb16-7" title="7">                        <span class="dt">statistics =</span> <span class="kw">list</span>(<span class="dt">continuous =</span> getPvalChiSq, </a>
-<a class="sourceLine" id="cb16-8" title="8">                                          <span class="dt">factor =</span> getPvalChiSq, </a>
-<a class="sourceLine" id="cb16-9" title="9">                                          <span class="dt">proportion =</span> getPvalFisher),</a>
-<a class="sourceLine" id="cb16-10" title="10">                        ...)</a>
-<a class="sourceLine" id="cb16-11" title="11">  </a>
-<a class="sourceLine" id="cb16-12" title="12">}</a>
-<a class="sourceLine" id="cb16-13" title="13"></a>
-<a class="sourceLine" id="cb16-14" title="14">t1 &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
-<a class="sourceLine" id="cb16-15" title="15">t1[[<span class="st">&quot;Gas&quot;</span>]] &lt;-</a>
-<a class="sourceLine" id="cb16-16" title="16"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg)</a>
-<a class="sourceLine" id="cb16-17" title="17">  </a>
-<a class="sourceLine" id="cb16-18" title="18">t1[[<span class="st">&quot;Weight&amp;dagger;&quot;</span>]] &lt;-</a>
-<a class="sourceLine" id="cb16-19" title="19"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>wt)</a>
-<a class="sourceLine" id="cb16-20" title="20"></a>
-<a class="sourceLine" id="cb16-21" title="21">t1[[<span class="st">&quot;Color&quot;</span>]] &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb16-22" title="22"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>col)</a>
-<a class="sourceLine" id="cb16-23" title="23"></a>
-<a class="sourceLine" id="cb16-24" title="24"><span class="kw">mergeDesc</span>(t1,</a>
-<a class="sourceLine" id="cb16-25" title="25">          <span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>gear)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-26" title="26"><span class="st">  </span><span class="kw">htmlTable</span>(<span class="dt">css.rgroup =</span> <span class="st">&quot;&quot;</span>,</a>
-<a class="sourceLine" id="cb16-27" title="27">            <span class="dt">caption  =</span> <span class="st">&quot;P-values generated from a custom set of values&quot;</span>,</a>
-<a class="sourceLine" id="cb16-28" title="28">            <span class="dt">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>)</a></code></pre></div>
+<p>By popular demand I’ve expanded with the option of having custom p-values. All you need to do is to provide a function that takes two values and exports a single p-value. There are several prepared functions that you can use or use as a template for your own p-value function. They all start with <code>getPval..</code>, e.g. <code>getPvalKruskal</code>. You can either provide a single function or you can set the defaults depending on the variable type:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">getTable1Stats &lt;-<span class="st"> </span><span class="cf">function</span>(x, <span class="dt">digits =</span> <span class="dv">0</span>, ...){</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">  <span class="kw">getDescriptionStatsBy</span>(<span class="dt">x =</span> x, </a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">                        <span class="dt">by =</span> mtcars<span class="op">$</span>am,</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">                        <span class="dt">digits =</span> digits,</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">                        <span class="dt">continuous_fn =</span> describeMedian,</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">                        <span class="dt">header_count =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb16-7" data-line-number="7">                        <span class="dt">statistics =</span> <span class="kw">list</span>(<span class="dt">continuous =</span> getPvalChiSq, </a>
+<a class="sourceLine" id="cb16-8" data-line-number="8">                                          <span class="dt">factor =</span> getPvalChiSq, </a>
+<a class="sourceLine" id="cb16-9" data-line-number="9">                                          <span class="dt">proportion =</span> getPvalFisher),</a>
+<a class="sourceLine" id="cb16-10" data-line-number="10">                        ...)</a>
+<a class="sourceLine" id="cb16-11" data-line-number="11">  </a>
+<a class="sourceLine" id="cb16-12" data-line-number="12">}</a>
+<a class="sourceLine" id="cb16-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb16-14" data-line-number="14">t1 &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb16-15" data-line-number="15">t1[[<span class="st">&quot;Gas&quot;</span>]] &lt;-</a>
+<a class="sourceLine" id="cb16-16" data-line-number="16"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>mpg)</a>
+<a class="sourceLine" id="cb16-17" data-line-number="17">  </a>
+<a class="sourceLine" id="cb16-18" data-line-number="18">t1[[<span class="st">&quot;Weight&amp;dagger;&quot;</span>]] &lt;-</a>
+<a class="sourceLine" id="cb16-19" data-line-number="19"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>wt)</a>
+<a class="sourceLine" id="cb16-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb16-21" data-line-number="21">t1[[<span class="st">&quot;Color&quot;</span>]] &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb16-22" data-line-number="22"><span class="st">  </span><span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>col)</a>
+<a class="sourceLine" id="cb16-23" data-line-number="23"></a>
+<a class="sourceLine" id="cb16-24" data-line-number="24"><span class="kw">mergeDesc</span>(t1,</a>
+<a class="sourceLine" id="cb16-25" data-line-number="25">          <span class="kw">getTable1Stats</span>(mtcars<span class="op">$</span>gear)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb16-26" data-line-number="26"><span class="st">  </span><span class="kw">htmlTable</span>(<span class="dt">css.rgroup =</span> <span class="st">&quot;&quot;</span>,</a>
+<a class="sourceLine" id="cb16-27" data-line-number="27">            <span class="dt">caption  =</span> <span class="st">&quot;P-values generated from a custom set of values&quot;</span>,</a>
+<a class="sourceLine" id="cb16-28" data-line-number="28">            <span class="dt">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>)</a></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
@@ -907,7 +907,7 @@ Weight†
 Color
 </td>
 <td style="text-align: center;">
-0.10
+0.80
 </td>
 </tr>
 <tr>
@@ -915,10 +915,10 @@ Color
   black
 </td>
 <td style="text-align: center;">
-6 (32%)
+4 (21%)
 </td>
 <td style="text-align: center;">
-7 (54%)
+3 (23%)
 </td>
 <td style="text-align: center;">
 </td>
@@ -928,10 +928,10 @@ Color
   red
 </td>
 <td style="text-align: center;">
-5 (26%)
+8 (42%)
 </td>
 <td style="text-align: center;">
-5 (38%)
+4 (31%)
 </td>
 <td style="text-align: center;">
 </td>
@@ -941,10 +941,10 @@ Color
   silver
 </td>
 <td style="text-align: center;">
-8 (42%)
+7 (37%)
 </td>
 <td style="text-align: center;">
-1 (8%)
+6 (46%)
 </td>
 <td style="text-align: center;">
 </td>

@@ -38,7 +38,6 @@ with(my_data,
   transitions$addTransitions()
 transitions$render()
 
-
 #######################
 # Side by side render #
 #######################
@@ -63,3 +62,12 @@ popViewport()
 pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 2))
 transitions.2$render(new_page = FALSE)
 
+##################
+# From issue #43 #
+##################
+
+transMatrix <- as.table(matrix(c(16, 4, 16, 64),ncol=2,byrow=T))
+transitions <- transMatrix %>%
+  getRefClass("Transition")$new(label=c("Step 1", "Step 2"))
+transitions$lwd_prop_type = "box"
+transitions$render()

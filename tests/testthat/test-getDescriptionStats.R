@@ -95,16 +95,16 @@ test_that("Check median function",
 
 test_that("Check small proportions", {
   n <- 1e4
-  a <- getDescriptionStatsBy(LETTERS[c(rep(1, times=(n - 4)), rep(2, times = 4))], 
-                             letters[c(rep(1, times=(n - 10)), rep(2, times=10))], 
+  a <- getDescriptionStatsBy(LETTERS[c(rep(1, times=(n - 4)), rep(2, times = 4))],
+                             letters[c(rep(1, times=(n - 10)), rep(2, times=10))],
                              hrzl_prop=TRUE,
                              statistics=TRUE,
                              digits=0,
                              digits.nonzero=2,
                              statistics.sig_lim=10^-4)
   expect_equivalent(as.character(a["A", "b"]), "6 (0.06%)")
-  a <- getDescriptionStatsBy(LETTERS[c(rep(1, times=(n - 4)), rep(2, times = 4))], 
-                             letters[c(rep(1, times=(n - 10)), rep(2, times=10))], 
+  a <- getDescriptionStatsBy(LETTERS[c(rep(1, times=(n - 4)), rep(2, times = 4))],
+                             letters[c(rep(1, times=(n - 10)), rep(2, times=10))],
                              hrzl_prop=TRUE,
                              statistics=TRUE,
                              digits=0,
@@ -544,14 +544,16 @@ test_that("missing levels are handled correctly when using custom descriptive fu
   set.seed(1)
   trial <- data.frame(visit = sort(rep(c("randomisation", "week1", "week2", "week3"), 5)),
                       arm = sort(rep(c("control", "treatment"))),
-                      outcome = rnorm(40))
+                      outcome = rnorm(40),
+                      stringsAsFactors = TRUE)
   trial_missing_first <- trial[!((trial$visit == "randomisation") & (trial$arm == "control")),]
   trial_missing_second <- trial[!((trial$visit == "randomisation") & (trial$arm == "treatment")),]
   trial_missing_both <- trial[trial$visit != "week3",]
 
   trial_2 <- data.frame(visit = sort(rep(c("randomisation", "week1", "week2", "week3"), 5)),
-                      arm = sort(rep(c("control", "standard treatment", "new treatment"))),
-                      outcome = rnorm(60))
+                        arm = sort(rep(c("control", "standard treatment", "new treatment"))),
+                        outcome = rnorm(60),
+                        stringsAsFactors = TRUE)
   trial_2_missing_first <- trial_2[!((trial_2$visit == "randomisation") & (trial_2$arm == "control")),]
   trial_2_missing_second <- trial_2[!((trial_2$visit == "randomisation") & (trial_2$arm == "standard treatment")),]
   trial_2_missing_outer <- trial_2[!((trial_2$visit == "randomisation") & (trial_2$arm != "new treatment")),]
