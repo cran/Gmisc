@@ -1,5 +1,10 @@
 NEWS for the Gmisc package
 
+Changes for 1.10.0
+------------------
+* Added yamlDump for quick object review
+* Added pathJoin for joining paths without worrying about trailing '/'
+* Added time2spanTxt for printing time span descriptor
 
 Changes for 1.9.1
 -----------------
