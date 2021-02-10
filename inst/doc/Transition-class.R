@@ -50,8 +50,7 @@ for (i in 1:length(Ch_classes)){
 }
 
 ## ---- echo=FALSE--------------------------------------------------------------
-knitr::opts_chunk$set(dev.args = list(type="cairo"), 
-                      message = FALSE, 
+knitr::opts_chunk$set(message = FALSE, 
                       warnings = FALSE)
 knitr::opts_chunk$set(fig.height = 5, fig.width=5)
 

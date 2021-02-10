@@ -49,8 +49,7 @@ trn_mtrx <-
 rm(prob)
 
 ## ---- echo=FALSE--------------------------------------------------------------
-knitr::opts_chunk$set(dev.args=list(type="cairo"), 
-                      message=FALSE, 
+knitr::opts_chunk$set(message=FALSE, 
                       warnings=FALSE)
 
 ## ---- echo=FALSE--------------------------------------------------------------
