@@ -1,6 +1,6 @@
 ## -----------------------------------------------------------------------------
-set.seed(1)
 library(magrittr)
+set.seed(1)
 n <- 100
 data <- 
   data.frame(
@@ -52,39 +52,38 @@ for (i in 1:length(Ch_classes)){
 ## ---- echo=FALSE--------------------------------------------------------------
 knitr::opts_chunk$set(message = FALSE, 
                       warnings = FALSE)
-knitr::opts_chunk$set(fig.height = 5, fig.width=5)
+knitr::opts_chunk$set(fig.height = 5, fig.width = 5)
 
 ## -----------------------------------------------------------------------------
 library(Gmisc)
 transitions <- table(data$Charnley_class, data$Charnley_class_1yr) %>%
-  getRefClass("Transition")$new(label=c("Before surgery", "1 year after"))
+  getRefClass("Transition")$new(label = c("Before surgery", "1 year after"))
 transitions$render()
 
 ## -----------------------------------------------------------------------------
 transitions <- table(data$Charnley_class, data$Charnley_class_1yr) %>%
-  getRefClass("Transition")$new(label=c("Before surgery", "1 year after"))
+  getRefClass("Transition")$new(label = c("Before surgery", "1 year after"),
+                                # Control the box text via grid::gpar()
+                                txt_gpar = grid::gpar(fontfamily = "serif"))
 transitions$title <- "Charnley class in relation to THR"
 transitions$arrow_type <- "simple"
 transitions$box_label_pos <- "bottom"
 transitions$render()
 
-## -----------------------------------------------------------------------------
+## ----color_transition---------------------------------------------------------
 transitions <- table(data$Charnley_class, data$Charnley_class_1yr, data$Sex) %>%
-  getRefClass("Transition")$new(label=c("Before surgery", "1 year after"))
+  getRefClass("Transition")$new(label = c("Before surgery", "1 year after"))
 transitions$title <- "Charnley class in relation to THR"
 transitions$clr_bar <- "bottom"
 transitions$render()
 
-## ---- echo=FALSE--------------------------------------------------------------
-knitr::opts_chunk$set(fig.height = 5, fig.width=7)
-
-## -----------------------------------------------------------------------------
+## ----multiple_transitions, fig.height = 5, fig.width = 7----------------------
 transitions <- table(data$Charnley_class, data$Charnley_class_1yr, data$Sex) %>%
-  getRefClass("Transition")$new(label=c("Before surgery", "1 year after"))
+  getRefClass("Transition")$new(label = c("Before surgery", "1 year after"))
 transitions$title <- "Charnley class in relation to THR"
 transitions$arrow_type <- "simple"
 table(data$Charnley_class_1yr, data$Charnley_class_2yr, data$Sex) %>%
-  transitions$addTransitions(label="2 years after")
+  transitions$addTransitions(label = "2 years after")
 library(grid)
 transitions$max_lwd <- unit(.05, "npc")
 transitions$render()

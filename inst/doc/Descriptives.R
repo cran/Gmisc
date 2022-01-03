@@ -1,38 +1,105 @@
-## ---- message=FALSE-----------------------------------------------------------
-data(mtcars)
-# For labeling we use the label()
-# function from the Hmisc package
-library(Hmisc)
+## ---- include=FALSE-----------------------------------------------------------
+library(magrittr)
+library(dplyr)
+library(Gmisc)
 
 # Style all the table output using htmlTable's theme handler
 htmlTable::setHtmlTableTheme(css.rgroup = "")
-
-label(mtcars$mpg) <- "Gas"
-units(mtcars$mpg) <- "Miles/(US) gallon"
-
-label(mtcars$wt) <- "Weight"
-units(mtcars$wt) <- "10<sup>3</sup> kg" # not sure the unit is correct
-
-mtcars$am <- factor(mtcars$am, levels = 0:1, labels = c("Automatic", "Manual"))
-label(mtcars$am) <- "Transmission"
-
-mtcars$gear <- factor(mtcars$gear)
-label(mtcars$gear) <- "Gears"
-
-# Make up some data for making it slightly more interesting
-mtcars$col <- factor(sample(c("red", "black", "silver"),
-                     size = NROW(mtcars), replace = TRUE))
-label(mtcars$col) <- "Car color"
+set.seed(123)
 
 ## -----------------------------------------------------------------------------
 library(Gmisc)
-getDescriptionStatsBy(x = mtcars$mpg, 
-                      by = mtcars$am)
+data("mtcars")
+mtcars <- mtcars %>% 
+  mutate(am = factor(am, levels = 0:1, labels = c("Automatic", "Manual")),
+         gear = factor(gear),
+         # Make up some data for making it slightly more interesting
+         col = factor(sample(c("red", "black", "silver"),
+                             size = NROW(mtcars), 
+                             replace = TRUE))) %>% 
+  set_column_labels(mpg = "Gas",
+                    wt = "Weight",
+                    am = "Transmission",
+                    gear = "Gears",
+                    col = "Car color") %>% 
+  set_column_units(mpg = "Miles/(US) gallon",
+                   wt = "10<sup>3</sup> lbs")
 
 ## -----------------------------------------------------------------------------
-getDescriptionStatsBy(x = mtcars$mpg, 
-                      by = mtcars$am,
-                      continuous_fn = describeMedian)
+mtcars %>% 
+  getDescriptionStatsBy(mpg, 
+                        wt,
+                        am,
+                        gear,
+                        col,
+                        by = am)
+
+## -----------------------------------------------------------------------------
+mtcars %>% 
+  getDescriptionStatsBy(mpg, 
+                        wt,
+                        am,
+                        gear,
+                        col,
+                        by = am,
+                        continuous_fn = describeMedian)
+
+## -----------------------------------------------------------------------------
+mtcars %>% 
+  getDescriptionStatsBy(mpg, 
+                        `Weight&dagger;` = wt,
+                        am,
+                        gear,
+                        col,
+                        by = am) %>% 
+  htmlTable(caption  = "Basic descriptive statistics from the mtcars dataset",
+            tfoot = "&dagger; The weight is in 10<sup>3</sup> kg")
+
+## -----------------------------------------------------------------------------
+mtcars %>% 
+  getDescriptionStatsBy(mpg, 
+                        `Weight&dagger;` = wt,
+                        am,
+                        gear,
+                        col,
+                        by = am,
+                        digits = 0,
+                        add_total_col = TRUE,
+                        use_units = "name") %>% 
+  addHtmlTableStyle(pos.caption = "bottom") %>% 
+  htmlTable(caption  = "Basic descriptive statistics from the mtcars dataset",
+            tfoot = "&dagger; The weight is in 10<sup>3</sup> kg")
+
+## ---- warning=FALSE-----------------------------------------------------------
+mtcars %>% 
+  getDescriptionStatsBy(mpg, 
+                        wt,
+                        am,
+                        gear,
+                        col,
+                        by = am,
+                        continuous_fn = describeMedian,
+                        digits = 0,
+                        header_count = TRUE,
+                        statistics = TRUE) %>% 
+  htmlTable(caption  = "Basic descriptive statistics from the mtcars dataset")
+
+## ---- warning=FALSE-----------------------------------------------------------
+mtcars %>% 
+  getDescriptionStatsBy(mpg, 
+                        wt,
+                        am,
+                        gear,
+                        col,
+                        by = am,
+                        continuous_fn = describeMedian,
+                        digits = 0,
+                        header_count = TRUE,
+                        statistics = list(continuous = getPvalChiSq, 
+                                          factor = getPvalChiSq, 
+                                          proportion = getPvalFisher)) %>% 
+  addHtmlTableStyle(pos.caption = "bottom") %>% 
+  htmlTable(caption  = "P-values generated from a custom set of values")
 
 ## -----------------------------------------------------------------------------
 getTable1Stats <- function(x, digits = 0, ...){
@@ -44,12 +111,7 @@ getTable1Stats <- function(x, digits = 0, ...){
                         ...)
   
 }
-getTable1Stats(mtcars$mpg)
 
-## -----------------------------------------------------------------------------
-getTable1Stats(mtcars$mpg, use_units = TRUE)
-
-## -----------------------------------------------------------------------------
 t1 <- list()
 t1[["Gas"]] <-
   getTable1Stats(mtcars$mpg)
@@ -68,69 +130,4 @@ t1 <- c(t1,
 mergeDesc(t1,
           htmlTable_args = list(caption  = "Basic descriptive statistics from the mtcars dataset",
                                 tfoot = "&dagger; The weight is in 10<sup>3</sup> kg"))
-
-## -----------------------------------------------------------------------------
-mergeDesc(getTable1Stats(mtcars$mpg),
-          `Weight&dagger;` = getTable1Stats(mtcars$wt),
-          Color = getTable1Stats(mtcars$col),
-          getTable1Stats(mtcars$gear),
-          htmlTable_args = list(caption  = "Basic descriptive statistics from the mtcars dataset",
-                                tfoot = "&dagger; The weight is in 10<sup>3</sup> kg"))
-
-## ---- warning=FALSE-----------------------------------------------------------
-getTable1Stats <- function(x, digits = 0, ...){
-  getDescriptionStatsBy(x = x, 
-                        by = mtcars$am,
-                        digits = digits,
-                        continuous_fn = describeMedian,
-                        header_count = TRUE,
-                        statistics = TRUE,
-                        ...)
-  
-}
-
-t1 <- list()
-t1[["Gas"]] <-
-  getTable1Stats(mtcars$mpg)
-  
-t1[["Weight&dagger;"]] <-
-  getTable1Stats(mtcars$wt)
-
-t1[["Color"]] <- 
-  getTable1Stats(mtcars$col)
-
-library(magrittr)
-mergeDesc(t1,
-          getTable1Stats(mtcars$gear)) %>%
-  htmlTable(caption  = "Basic descriptive statistics from the mtcars dataset",
-            tfoot = "&dagger; The weight is in 10<sup>3</sup> kg")
-
-## ---- warning=FALSE-----------------------------------------------------------
-getTable1Stats <- function(x, digits = 0, ...){
-  getDescriptionStatsBy(x = x, 
-                        by = mtcars$am,
-                        digits = digits,
-                        continuous_fn = describeMedian,
-                        header_count = TRUE,
-                        statistics = list(continuous = getPvalChiSq, 
-                                          factor = getPvalChiSq, 
-                                          proportion = getPvalFisher),
-                        ...)
-  
-}
-
-t1 <- list()
-t1[["Gas"]] <-
-  getTable1Stats(mtcars$mpg)
-  
-t1[["Weight&dagger;"]] <-
-  getTable1Stats(mtcars$wt)
-
-t1[["Color"]] <- 
-  getTable1Stats(mtcars$col)
-
-mergeDesc(t1,
-          getTable1Stats(mtcars$gear)) %>%
-  htmlTable(caption  = "P-values generated from a custom set of values",
-            tfoot = "&dagger; The weight is in 10<sup>3</sup> kg")
 
