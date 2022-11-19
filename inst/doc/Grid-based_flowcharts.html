@@ -16,25 +16,38 @@
 
 <title>Building a flowchart</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -52,55 +65,54 @@ pre > code.sourceCode { white-space: pre-wrap; }
 pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {   }
+{ }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -109,13 +121,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -127,7 +146,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -146,28 +345,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="TOC">
 <ul>
-<li><a href="#flowchart">Flowchart</a></li>
-<li><a href="#basic-components-explained">Basic components explained</a></li>
-<li><a href="#a-basic-box">A basic box</a></li>
-<li><a href="#a-box-with-proportiions">A box with proportiions</a></li>
-<li><a href="#the-box-coordinates">The box coordinates</a></li>
-<li><a href="#connecting-the-boxes">Connecting the boxes</a></li>
-<li><a href="#alignment">Alignment</a></li>
-<li><a href="#spreading">Spreading</a></li>
-<li><a href="#math-expressions-in-boxes">Math expressions in boxes</a></li>
-<li><a href="#grid-some-background-info">Grid &amp; some background info</a>
+<li><a href="#flowchart" id="toc-flowchart">Flowchart</a></li>
+<li><a href="#basic-components-explained" id="toc-basic-components-explained">Basic components explained</a></li>
+<li><a href="#a-basic-box" id="toc-a-basic-box">A basic box</a></li>
+<li><a href="#a-box-with-proportiions" id="toc-a-box-with-proportiions">A box with proportiions</a></li>
+<li><a href="#the-box-coordinates" id="toc-the-box-coordinates">The box
+coordinates</a></li>
+<li><a href="#connecting-the-boxes" id="toc-connecting-the-boxes">Connecting the boxes</a></li>
+<li><a href="#alignment" id="toc-alignment">Alignment</a></li>
+<li><a href="#spreading" id="toc-spreading">Spreading</a></li>
+<li><a href="#math-expressions-in-boxes" id="toc-math-expressions-in-boxes">Math expressions in boxes</a></li>
+<li><a href="#grid-some-background-info" id="toc-grid-some-background-info">Grid &amp; some background info</a>
 <ul>
-<li><a href="#basics">Basics</a></li>
-<li><a href="#relative-units">Relative units</a></li>
-<li><a href="#absolute-units">Absolute units</a></li>
+<li><a href="#basics" id="toc-basics">Basics</a></li>
+<li><a href="#relative-units" id="toc-relative-units">Relative
+units</a></li>
+<li><a href="#absolute-units" id="toc-absolute-units">Absolute
+units</a></li>
 </ul></li>
-<li><a href="#tips-for-debugging">Tips for debugging</a></li>
+<li><a href="#tips-for-debugging" id="toc-tips-for-debugging">Tips for
+debugging</a></li>
 </ul>
 </div>
 
 <div id="flowchart" class="section level1">
 <h1>Flowchart</h1>
-<p>A flowchart is a type of diagram that represents a workflow or process. In research we often want to explain how we recruited our patients, how many that were available from the start, how many that were excluded and how many were left at the final analysis. The <strong>Gmisc</strong> package provides a convenient set of functions for doing this using the R’s built-in <code>grid</code> package with some bells and whistles. Below is a simple example that illustrates what we’re aiming for.</p>
+<p>A flowchart is a type of diagram that represents a workflow or
+process. In research we often want to explain how we recruited our
+patients, how many that were available from the start, how many that
+were excluded and how many were left at the final analysis. The
+<strong>Gmisc</strong> package provides a convenient set of functions
+for doing this using the R’s built-in <code>grid</code> package with
+some bells and whistles. Below is a simple example that illustrates what
+we’re aiming for.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Gmisc, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(htmlTable)</span>
@@ -236,15 +446,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="basic-components-explained" class="section level1">
 <h1>Basic components explained</h1>
-<p>There is a basic set of components that are used for generating flowcharts:</p>
+<p>There is a basic set of components that are used for generating
+flowcharts:</p>
 <ul>
-<li>Boxes, these are generated through the <code>boxGrob</code> and <code>boxPropGrob</code> functions.</li>
-<li>Arrows between boxes, these are generated through the <code>connectGrob</code> function.</li>
+<li>Boxes, these are generated through the <code>boxGrob</code> and
+<code>boxPropGrob</code> functions.</li>
+<li>Arrows between boxes, these are generated through the
+<code>connectGrob</code> function.</li>
 </ul>
-<p>These can be positioned directly or preferably manipulated according to the following principles:</p>
+<p>These can be positioned directly or preferably manipulated according
+to the following principles:</p>
 <ul>
-<li>Spread - we want to use the full plot and either we position each element or we automatically spread them in a vertical or horizontal direction, <code>spreadHorizontal</code> and <code>spreadVertical</code> functions.</li>
-<li>Alignment of boxes - before or after spreading we may want to align boxes: <code>alignHorizontal</code> and <code>alignVertical</code> functions.</li>
+<li>Spread - we want to use the full plot and either we position each
+element or we automatically spread them in a vertical or horizontal
+direction, <code>spreadHorizontal</code> and <code>spreadVertical</code>
+functions.</li>
+<li>Alignment of boxes - before or after spreading we may want to align
+boxes: <code>alignHorizontal</code> and <code>alignVertical</code>
+functions.</li>
 </ul>
 </div>
 <div id="a-basic-box" class="section level1">
@@ -269,7 +488,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="a-box-with-proportiions" class="section level1">
 <h1>A box with proportiions</h1>
-<p>The <code>boxPropGrob</code> is for displaying proportions as the name indicates.</p>
+<p>The <code>boxPropGrob</code> is for displaying proportions as the
+name indicates.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.newpage</span>()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">boxPropGrob</span>(<span class="st">&quot;A box with proportions&quot;</span>,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Left side&quot;</span>, <span class="st">&quot;Right side&quot;</span>,</span>
@@ -278,7 +498,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="the-box-coordinates" class="section level1">
 <h1>The box coordinates</h1>
-<p>The boxes have coordinates that allow you to easily draw lines to and from it. The coordinates are stored in the <code>coords</code> attribute. Below is an illustration of the coordinates for the two boxes:</p>
+<p>The boxes have coordinates that allow you to easily draw lines to and
+from it. The coordinates are stored in the <code>coords</code>
+attribute. Below is an illustration of the coordinates for the two
+boxes:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.newpage</span>()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>smpl_bx <span class="ot">&lt;-</span> <span class="fu">boxGrob</span>(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">label =</span> <span class="st">&quot;A simple box&quot;</span>,</span>
@@ -362,7 +585,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="connecting-the-boxes" class="section level1">
 <h1>Connecting the boxes</h1>
-<p>In order to make connecting boxes with an arrow there is the <code>connectGrob</code> function. Here’s an example of how you can use it for connecting a set of boxes:</p>
+<p>In order to make connecting boxes with an arrow there is the
+<code>connectGrob</code> function. Here’s an example of how you can use
+it for connecting a set of boxes:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.newpage</span>()</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Initiate the boxes that we want to connect</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>side <span class="ot">&lt;-</span> <span class="fu">boxPropGrob</span>(<span class="st">&quot;Side&quot;</span>, <span class="st">&quot;Left&quot;</span>, <span class="st">&quot;Right&quot;</span>,</span>
@@ -426,7 +651,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="alignment" class="section level1">
 <h1>Alignment</h1>
-<p>We frequently want to align boxes in either a horizontal or a vertical row. For this there are two functions, <code>alignHorizontal()</code> and <code>alignVertical()</code>.</p>
+<p>We frequently want to align boxes in either a horizontal or a
+vertical row. For this there are two functions,
+<code>alignHorizontal()</code> and <code>alignVertical()</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>align_1 <span class="ot">&lt;-</span> <span class="fu">boxGrob</span>(<span class="st">&quot;Align 1&quot;</span>,</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y =</span> .<span class="dv">9</span>,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">x =</span> <span class="dv">0</span>,</span>
@@ -531,7 +758,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="spreading" class="section level1">
 <h1>Spreading</h1>
-<p>Similarly to alignment we often want to spread our boxes within a space so that we use all the available space in the <code>viewport</code>. This can be done through the <code>spreadHorizontal()</code> and <code>spreadVertical()</code>. You can both spread the entire span or only between a subspan that is defined using the <code>.to</code> and <code>.from</code> arguments.</p>
+<p>Similarly to alignment we often want to spread our boxes within a
+space so that we use all the available space in the
+<code>viewport</code>. This can be done through the
+<code>spreadHorizontal()</code> and <code>spreadVertical()</code>. You
+can both spread the entire span or only between a subspan that is
+defined using the <code>.to</code> and <code>.from</code> arguments.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>b1 <span class="ot">&lt;-</span> <span class="fu">boxGrob</span>(<span class="st">&quot;B1&quot;</span>,</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">y =</span> .<span class="dv">85</span>,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">x =</span> <span class="fl">0.1</span>,</span>
@@ -661,13 +893,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="math-expressions-in-boxes" class="section level1">
 <h1>Math expressions in boxes</h1>
-<p>It is possible to use the R <code>expression</code> or the <code>bquote</code> functions to produce bold or italics text, or even formulas.</p>
+<p>It is possible to use the R <code>expression</code> or the
+<code>bquote</code> functions to produce bold or italics text, or even
+formulas.</p>
 <p>A few pointers on <code>expression</code>…</p>
 <ul>
-<li>expressions with multiple elements should be combined using <code>paste</code>. E.g. <code>expression(paste(beta, &quot;1&quot;))</code> would produce <span class="math inline">\(\beta1\)</span></li>
-<li>the behavior of <code>paste</code> when used in expression is more like the normal behavior or <code>paste0</code> (i.e. no separating space)</li>
-<li>Greek letters can be entered outside of quotes by typing the name e.g. <code>expression(beta)</code> will become <span class="math inline">\(\beta\)</span> and <code>expression(Gamma)</code> will become <span class="math inline">\(\Gamma\)</span> (note the case, not all Greek letters are available in upper case)</li>
-<li>superscripts are done via <code>expression(x^2)</code> and subscripts via <code>expression(x[2])</code></li>
+<li>expressions with multiple elements should be combined using
+<code>paste</code>. E.g. <code>expression(paste(beta, &quot;1&quot;))</code> would
+produce <span class="math inline">\(\beta1\)</span></li>
+<li>the behavior of <code>paste</code> when used in expression is more
+like the normal behavior or <code>paste0</code> (i.e. no separating
+space)</li>
+<li>Greek letters can be entered outside of quotes by typing the name
+e.g. <code>expression(beta)</code> will become <span class="math inline">\(\beta\)</span> and <code>expression(Gamma)</code>
+will become <span class="math inline">\(\Gamma\)</span> (note the case,
+not all Greek letters are available in upper case)</li>
+<li>superscripts are done via <code>expression(x^2)</code> and
+subscripts via <code>expression(x[2])</code></li>
 </ul>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.newpage</span>()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="do">###############</span></span>
@@ -700,15 +942,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bquote</span>(alpha <span class="sc">==</span> theta[<span class="dv">1</span>] <span class="sc">*</span> .(a) <span class="sc">+</span> ldots) <span class="sc">%&gt;%</span> boxGrob,</span>
 <span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">&quot;argument&quot;</span>, <span class="fu">sQuote</span>(<span class="st">&quot;x&quot;</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">must be non-zero&quot;</span>) <span class="sc">%&gt;%</span> boxGrob) <span class="sc">%&gt;%</span> </span>
 <span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spreadHorizontal</span>(<span class="at">.from =</span> .<span class="dv">2</span>, <span class="at">.to =</span> .<span class="dv">8</span>)</span></code></pre></div>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
 <p>See the <code>plotmath</code> help file for more details.</p>
 </div>
 <div id="grid-some-background-info" class="section level1">
 <h1>Grid &amp; some background info</h1>
-<p>The <code>grid</code> package is what makes R graphics great. All the popular tools with awesome graphics use the <code>grid</code> as the back-end, e.g. <code>ggplot2</code> and <code>lattice</code>. When I started working on the <code>forestplot</code> package I first encountered the <code>grid</code> and it was instant love. In this vignette I’ll show how you can use the flowchart-functions in this package together with <code>grid</code> in order to generate a flowchart.</p>
+<p>The <code>grid</code> package is what makes R graphics great. All the
+popular tools with awesome graphics use the <code>grid</code> as the
+back-end, e.g. <code>ggplot2</code> and <code>lattice</code>. When I
+started working on the <code>forestplot</code> package I first
+encountered the <code>grid</code> and it was instant love. In this
+vignette I’ll show how you can use the flowchart-functions in this
+package together with <code>grid</code> in order to generate a
+flowchart.</p>
 <div id="basics" class="section level2">
 <h2>Basics</h2>
-<p>The grid package splits the plot into views. You can define a <code>viewport</code> and it will work as an isolated part of the plot, ignorant of the world around it. You do this via <code>viewport()</code>, below I create a plot and add a rectangle to it:</p>
+<p>The grid package splits the plot into views. You can define a
+<code>viewport</code> and it will work as an isolated part of the plot,
+ignorant of the world around it. You do this via
+<code>viewport()</code>, below I create a plot and add a rectangle to
+it:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the grid library</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># part of standard R libraries so no need installing</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(grid)</span>
@@ -722,17 +975,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">popViewport</span>()</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAG1BMVEUkKCJIUEZseGh/f3+BgYGqqqrY8NHo6Oj///9UcyRXAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAA2ElEQVR4nO3dgQ3CQBADwScJhP4rpgaETstLsxV4KvB6b96qB/waQB1AHUAdQB1AHUAdQB1A3beA+zncPQy41mO0dQ0DzuM12nECAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEwAtj/W3P7a9O8CqAOoA6gDqAOoA6gDqAOo2x7wAZsV++YKFc6qAAAAAElFTkSuQmCC" /><!-- --></p>
-<p>Important to note is that the grid allows you to define precise units or relative units.</p>
+<p>Important to note is that the grid allows you to define precise units
+or relative units.</p>
 </div>
 <div id="relative-units" class="section level2">
 <h2>Relative units</h2>
 <ul>
-<li><code>npc</code> - ranges from 0-1 where 1 is 100% of the <code>viewport</code> width.</li>
-<li><code>snpc</code> - similar to <code>npc</code> but is the same length in height/width.</li>
-<li><code>lines</code> - the height of a line. The go-to method if you want to know the height of a few lines of text. It’s relative to the <code>viewport</code>’s <code>fontsize</code> and <code>lineheight</code>.</li>
-<li><code>char</code> - the <code>lines</code> without the <code>lineheight</code> part.</li>
+<li><code>npc</code> - ranges from 0-1 where 1 is 100% of the
+<code>viewport</code> width.</li>
+<li><code>snpc</code> - similar to <code>npc</code> but is the same
+length in height/width.</li>
+<li><code>lines</code> - the height of a line. The go-to method if you
+want to know the height of a few lines of text. It’s relative to the
+<code>viewport</code>’s <code>fontsize</code> and
+<code>lineheight</code>.</li>
+<li><code>char</code> - the <code>lines</code> without the
+<code>lineheight</code> part.</li>
 </ul>
-<p>Below we draw a line with relative units in two nested viewports. Note that the to lines are generated from the exact same <code>grob</code> object but appear different depending on the <code>viewport</code> they are in:</p>
+<p>Below we draw a line with relative units in two nested viewports.
+Note that the to lines are generated from the exact same
+<code>grob</code> object but appear different depending on the
+<code>viewport</code> they are in:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.newpage</span>()</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pushViewport</span>(<span class="fu">viewport</span>(<span class="at">width =</span> .<span class="dv">5</span>, <span class="at">height =</span> .<span class="dv">8</span>, <span class="at">clip =</span> <span class="st">&quot;on&quot;</span>))</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.rect</span>(<span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">lty =</span> <span class="dv">2</span>, <span class="at">fill =</span> <span class="st">&quot;lightyellow&quot;</span>))</span>
@@ -749,10 +1012,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="absolute-units" class="section level2">
 <h2>Absolute units</h2>
 <ul>
-<li><code>mm</code> - probably my go-to unit when I want something absolute.</li>
-<li><code>inch</code> - if you prefer inches I guess this is the go-to choice.</li>
+<li><code>mm</code> - probably my go-to unit when I want something
+absolute.</li>
+<li><code>inch</code> - if you prefer inches I guess this is the go-to
+choice.</li>
 </ul>
-<p>Below we draw a line with absolute units in two nested <code>viewports</code>. Note that the lines have the exact same length:</p>
+<p>Below we draw a line with absolute units in two nested
+<code>viewports</code>. Note that the lines have the exact same
+length:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.newpage</span>()</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pushViewport</span>(<span class="fu">viewport</span>(<span class="at">width =</span> .<span class="dv">5</span>, <span class="at">height =</span> .<span class="dv">8</span>, <span class="at">clip =</span> <span class="st">&quot;on&quot;</span>))</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.rect</span>(<span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">lty =</span> <span class="dv">2</span>, <span class="at">fill =</span> <span class="st">&quot;lightyellow&quot;</span>))</span>
@@ -769,7 +1036,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="tips-for-debugging" class="section level1">
 <h1>Tips for debugging</h1>
-<p>If you find that your elements don’t look as expected make sure that your not changing <code>viewport</code>/device. While most coordinates are relative some of them need to be fixed and therefore changing the <code>viewport</code> may impact where elements are rendered.</p>
+<p>If you find that your elements don’t look as expected make sure that
+your not changing <code>viewport</code>/device. While most coordinates
+are relative some of them need to be fixed and therefore changing the
+<code>viewport</code> may impact where elements are rendered.</p>
 </div>
 
 

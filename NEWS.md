@@ -1,5 +1,10 @@
 NEWS for the Gmisc package
 
+Changes for 3.0.1
+-----------------
+* Fixed `pathJoin` for vector inputs
+* Added `difftime` as numeric to `getDescriptionStatsBy`
+
 Changes for 3.0.0
 -----------------
 * **BREAKING:** The input parameters have changed for `getDescriptionStatsBy` and dropped old deprecated parameter conversion:
