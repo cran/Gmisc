@@ -1,4 +1,4 @@
-435d7522adcd692d28a813487b84599d *DESCRIPTION
+a4f783be216b5ac60e46f7a667a4d053 *DESCRIPTION
 9efcc940e852b7b562ca09c8dd54b88a *NAMESPACE
 67b0ffbe0d2a31a63dadcde8c1891802 *NEWS.md
 33c4deb6d45ffe520c72075cd6563a57 *R/Gmisc.R
@@ -43,7 +43,7 @@ bbdfd3ce1255df7b009175aa23c76a9e *R/getDescriptionStatsBy_prPropDescs.R
 0364a4cbb2c45350a67222b1c66e6495 *R/getSvdMostInfluential.R
 6b4f521cc9470b50bace8dd397da7daf *R/insertRowAndKeepAttr.R
 8a6343672a650ca970df3a668d5cef14 *R/mergeDesc.R
-aac0ad3c9e1c953c9f7f9ab5ebecf677 *R/mergeDesc_S3_fns.R
+9ea07359947a1cda71385c8478667011 *R/mergeDesc_S3_fns.R
 43d1d060e6642e4215a40f0b522c4430 *R/mergeLists.R
 26711ed48dffe0d3f5bf476c83e75b2b *R/pathJoin.R
 04b0e44f87a5778e83f601ae4f473da3 *R/private_functions.R
@@ -61,16 +61,16 @@ d8d768315da4843ee5b9c0b96af88151 *R/yamlDump.R
 3bc152c74a1c09bfec84540738f93e9f *build/vignette.rds
 4f32b9814985484eda55d535455323f1 *inst/doc/Descriptives.R
 dee1bf9859ffc884aa9cf3cab163ced7 *inst/doc/Descriptives.Rmd
-16dbcd0edd2520dfc3f12e4ece410ec8 *inst/doc/Descriptives.html
+98b971b24c4a6a935c0073aec1017a88 *inst/doc/Descriptives.html
 557871f7348c9dd0a0f33a4f28d2a96f *inst/doc/Grid-based_flowcharts.R
 9e4b197ee182dc4c0ff8174acd90f173 *inst/doc/Grid-based_flowcharts.Rmd
-098a4994a8b472d3898f0e7d2fab2935 *inst/doc/Grid-based_flowcharts.html
+02504e591e364066907525b504884858 *inst/doc/Grid-based_flowcharts.html
 d89602003cd738b132cfefd3fbc4e9c6 *inst/doc/Transition-class.R
 e469bb0b1871be0b2d2f9cd93c3a407a *inst/doc/Transition-class.Rmd
-111e1ee60f6c095af70d3cf31f9644b9 *inst/doc/Transition-class.html
+bb075d6fc2716e695f442f92016d10cc *inst/doc/Transition-class.html
 91e0e4cf0b1de89ff59901bfcf9f9de6 *inst/doc/transitionPlot.R
 6402ea8312869b37fa4ada52b86f4be2 *inst/doc/transitionPlot.Rmd
-ddb1cc263adca97e5c52262e862143de *inst/doc/transitionPlot.html
+628ee7255cfb1809c4d48b5bccb61677 *inst/doc/transitionPlot.html
 12aef1415d371b3fd955bf621c0c0f28 *inst/examples/alignBox_ex.R
 46295e2667ce0054f25ecbf92acb54d8 *inst/examples/bezierArrowGradient_example.R
 a0e3237252e4fb8a51c4e83628d76371 *inst/examples/bezierArrowSmpl_example.R
@@ -124,7 +124,7 @@ db672a2743879f2f10bd9cf6c2908b0d *man/getSvdMostInfluential.Rd
 a65a66e894c15c417a2dafc787f788e1 *man/getVectorAngle.Rd
 d96f315ec46cd3bbb1121c3da4523e93 *man/gnrlBezierPoints.Rd
 b57a208a9781f12f8c12712c0666ef8f *man/has.Rd
-5c4008e62aa61f2c638d3580f541d861 *man/htmlTable_latex.Rd
+7dc05ff90f50bdd19f43b9a7a54d3f6e *man/htmlTable_latex.Rd
 45dea4bdc47c1f392e77c8b6b8ea5aa3 *man/insertRowAndKeepAttr.Rd
 9caecc5621bcde4560502e4ea43692cc *man/isHorizontal.Rd
 e9a58a0970722469f82737d9c42d691f *man/mergeDesc.Rd
@@ -185,7 +185,6 @@ d7a706fcf5acacfbb6a3e2943c982df2 *src/gnrlBezier.cpp
 b4db4b833839e93250e798e74484a814 *tests/cpp_tests/visual_line_debugging.R
 b415270f59b707adac705bfab5a1515b *tests/performance/bezierArrowProfiler.R
 2f0e34a5909a36bed38f9cc5eb5b5391 *tests/testthat.R
-5d3a0f326a0a5f41a069e26efd320888 *tests/testthat/Rplots.pdf
 d89323119f77fb8cfca2c88d36a2c150 *tests/testthat/test-bezier.R
 7ce327b64222792e619e6bd0ac2a41ef *tests/testthat/test-boxGrob_move.R
 515b3fcc8fe34108ab1ab34d1480c8db *tests/testthat/test-boxGrob_spread.R
