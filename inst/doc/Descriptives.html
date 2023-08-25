@@ -12,7 +12,7 @@
 
 <meta name="author" content="Max Gordon" />
 
-<meta name="date" content="2023-03-13" />
+<meta name="date" content="2023-08-25" />
 
 <title>Descriptives statistics for Table 1</title>
 
@@ -320,7 +320,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; } </style>
 
 <h1 class="title toc-ignore">Descriptives statistics for Table 1</h1>
 <h4 class="author">Max Gordon</h4>
-<h4 class="date">2023-03-13</h4>
+<h4 class="date">2023-08-25</h4>
 
 
 <div id="TOC">
@@ -354,33 +354,33 @@ transmission to those without. The units and labels are built upon the
 logic in the <strong>Hmisc</strong> package that allow us to specify
 attributes on columns. <em>Note</em> that this labeling is not needed,
 it just makes stuff nicer.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Gmisc)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mtcars&quot;</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mtcars <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">am =</span> <span class="fu">factor</span>(am, <span class="at">levels =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Automatic&quot;</span>, <span class="st">&quot;Manual&quot;</span>)),</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">gear =</span> <span class="fu">factor</span>(gear),</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>         <span class="co"># Make up some data for making it slightly more interesting</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">factor</span>(<span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;black&quot;</span>, <span class="st">&quot;silver&quot;</span>),</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                             <span class="at">size =</span> <span class="fu">NROW</span>(mtcars), </span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">replace =</span> <span class="cn">TRUE</span>))) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_column_labels</span>(<span class="at">mpg =</span> <span class="st">&quot;Gas&quot;</span>,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">wt =</span> <span class="st">&quot;Weight&quot;</span>,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">am =</span> <span class="st">&quot;Transmission&quot;</span>,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                    <span class="at">gear =</span> <span class="st">&quot;Gears&quot;</span>,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">col =</span> <span class="st">&quot;Car color&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_column_units</span>(<span class="at">mpg =</span> <span class="st">&quot;Miles/(US) gallon&quot;</span>,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                   <span class="at">wt =</span> <span class="st">&quot;10&lt;sup&gt;3&lt;/sup&gt; lbs&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(Gmisc)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mtcars&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>mtcars <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">am =</span> <span class="fu">factor</span>(am, <span class="at">levels =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Automatic&quot;</span>, <span class="st">&quot;Manual&quot;</span>)),</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>         <span class="at">gear =</span> <span class="fu">factor</span>(gear),</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>         <span class="co"># Make up some data for making it slightly more interesting</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">factor</span>(<span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;black&quot;</span>, <span class="st">&quot;silver&quot;</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>                             <span class="at">size =</span> <span class="fu">NROW</span>(mtcars), </span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>                             <span class="at">replace =</span> <span class="cn">TRUE</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>  <span class="fu">set_column_labels</span>(<span class="at">mpg =</span> <span class="st">&quot;Gas&quot;</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>                    <span class="at">wt =</span> <span class="st">&quot;Weight&quot;</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>                    <span class="at">am =</span> <span class="st">&quot;Transmission&quot;</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>                    <span class="at">gear =</span> <span class="st">&quot;Gears&quot;</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>                    <span class="at">col =</span> <span class="st">&quot;Car color&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>  <span class="fu">set_column_units</span>(<span class="at">mpg =</span> <span class="st">&quot;Miles/(US) gallon&quot;</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>                   <span class="at">wt =</span> <span class="st">&quot;10&lt;sup&gt;3&lt;/sup&gt; lbs&quot;</span>)</span></code></pre></div>
 <div id="the-basics-of-getdescriptionstatsby" class="section level1">
 <h1>The basics of <code>getDescriptionStatsBy</code></h1>
 <p>The function <code>getDescriptionStatsBy</code> is a simple way to do
 basic descriptive statistics. Mandatory named column is <em>by</em>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                        wt,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                        am,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                        gear,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                        col,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">by =</span> am)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                        wt,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>                        am,</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>                        gear,</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>                        col,</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>                        <span class="at">by =</span> am)</span></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
@@ -508,14 +508,14 @@ Car color
 </table>
 <p>If we prefer median we can simply specify the statistic used with
 continuous variables:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                        wt,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                        am,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                        gear,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                        col,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">by =</span> am,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">continuous_fn =</span> describeMedian)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>                        wt,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>                        am,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>                        gear,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>                        col,</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>                        <span class="at">by =</span> am,</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>                        <span class="at">continuous_fn =</span> describeMedian)</span></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
@@ -650,15 +650,15 @@ us to get publication ready tables that can simply be copy-pasted into
 our paper. <em>Note</em> that we here use html code † that we then
 explain in the footer. If we specify a name to the parameters like this
 we override the labels previously set.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                        <span class="st">`</span><span class="at">Weight&amp;dagger;</span><span class="st">`</span> <span class="ot">=</span> wt,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                        am,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                        gear,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                        col,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">by =</span> am) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">htmlTable</span>(<span class="at">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                        <span class="st">`</span><span class="at">Weight&amp;dagger;</span><span class="st">`</span> <span class="ot">=</span> wt,</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>                        am,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>                        gear,</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>                        col,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>                        <span class="at">by =</span> am) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="fu">htmlTable</span>(<span class="at">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>            <span class="at">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>)</span></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
@@ -802,19 +802,19 @@ Car color
 <p>There is a large set of options for
 <code>getDescriptionStatsBy</code>, here is an example with some of them
 an some extra styling.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                        <span class="st">`</span><span class="at">Weight&amp;dagger;</span><span class="st">`</span> <span class="ot">=</span> wt,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                        am,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                        gear,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                        col,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">by =</span> am,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">digits =</span> <span class="dv">0</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">add_total_col =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">use_units =</span> <span class="st">&quot;name&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addHtmlTableStyle</span>(<span class="at">pos.caption =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">htmlTable</span>(<span class="at">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>                        <span class="st">`</span><span class="at">Weight&amp;dagger;</span><span class="st">`</span> <span class="ot">=</span> wt,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>                        am,</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>                        gear,</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>                        col,</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>                        <span class="at">by =</span> am,</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>                        <span class="at">digits =</span> <span class="dv">0</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>                        <span class="at">add_total_col =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>                        <span class="at">use_units =</span> <span class="st">&quot;name&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>  <span class="fu">addHtmlTableStyle</span>(<span class="at">pos.caption =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  <span class="fu">htmlTable</span>(<span class="at">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>            <span class="at">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>)</span></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
@@ -990,18 +990,18 @@ Basic descriptive statistics from the mtcars dataset
 therefore added basic statistics consisting that defaults to Fisher’s
 exact test for proportions and Wilcoxon rank sum test for continuous
 values.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                        wt,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                        am,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                        gear,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                        col,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">by =</span> am,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">continuous_fn =</span> describeMedian,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">digits =</span> <span class="dv">0</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">header_count =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                        <span class="at">statistics =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">htmlTable</span>(<span class="at">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>                        wt,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>                        am,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>                        gear,</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>                        col,</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>                        <span class="at">by =</span> am,</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>                        <span class="at">continuous_fn =</span> describeMedian,</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>                        <span class="at">digits =</span> <span class="dv">0</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>                        <span class="at">header_count =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>                        <span class="at">statistics =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>  <span class="fu">htmlTable</span>(<span class="at">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>)</span></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
@@ -1171,21 +1171,21 @@ functions that you can use or use as a template for your own p-value
 function. They all start with <code>getPval..</code>,
 e.g. <code>getPvalKruskal</code>. You can either provide a single
 function or you can set the defaults depending on the variable type:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                        wt,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                        am,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                        gear,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                        col,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">by =</span> am,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">continuous_fn =</span> describeMedian,</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">digits =</span> <span class="dv">0</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">header_count =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                        <span class="at">statistics =</span> <span class="fu">list</span>(<span class="at">continuous =</span> getPvalChiSq, </span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">factor =</span> getPvalChiSq, </span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">proportion =</span> getPvalFisher)) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addHtmlTableStyle</span>(<span class="at">pos.caption =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">htmlTable</span>(<span class="at">caption  =</span> <span class="st">&quot;P-values generated from a custom set of values&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>                        wt,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>                        am,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>                        gear,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>                        col,</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>                        <span class="at">by =</span> am,</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>                        <span class="at">continuous_fn =</span> describeMedian,</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>                        <span class="at">digits =</span> <span class="dv">0</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>                        <span class="at">header_count =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>                        <span class="at">statistics =</span> <span class="fu">list</span>(<span class="at">continuous =</span> getPvalChiSq, </span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>                                          <span class="at">factor =</span> getPvalChiSq, </span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>                                          <span class="at">proportion =</span> getPvalFisher)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>  <span class="fu">addHtmlTableStyle</span>(<span class="at">pos.caption =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>  <span class="fu">htmlTable</span>(<span class="at">caption  =</span> <span class="st">&quot;P-values generated from a custom set of values&quot;</span>)</span></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
@@ -1352,34 +1352,34 @@ P-values generated from a custom set of values
 <h1>Using <code>mergeDesc</code></h1>
 <p>Prior to Gmisc v3.0 <code>mergeDesc</code> was the best way to
 quickly assemble a “Table 1”:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>getTable1Stats <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">digits =</span> <span class="dv">0</span>, ...){</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(<span class="at">x =</span> x, </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">by =</span> mtcars<span class="sc">$</span>am,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">digits =</span> digits,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">continuous_fn =</span> describeMedian,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">header_count =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                        ...)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>t1 <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>t1[[<span class="st">&quot;Gas&quot;</span>]] <span class="ot">&lt;-</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getTable1Stats</span>(mtcars<span class="sc">$</span>mpg)</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>t1[[<span class="st">&quot;Weight&amp;dagger;&quot;</span>]] <span class="ot">&lt;-</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getTable1Stats</span>(mtcars<span class="sc">$</span>wt)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>t1[[<span class="st">&quot;Color&quot;</span>]] <span class="ot">&lt;-</span> </span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getTable1Stats</span>(mtcars<span class="sc">$</span>col)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co"># If we want to use the labels set in the beginning</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co"># we add an element without a name</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>t1 <span class="ot">&lt;-</span> <span class="fu">c</span>(t1,</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="fu">list</span>(<span class="fu">getTable1Stats</span>(mtcars<span class="sc">$</span>gear)))</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="fu">mergeDesc</span>(t1,</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>          <span class="at">htmlTable_args =</span> <span class="fu">list</span>(<span class="at">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>                                <span class="at">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>getTable1Stats <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">digits =</span> <span class="dv">0</span>, ...){</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(<span class="at">x =</span> x, </span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>                        <span class="at">by =</span> mtcars<span class="sc">$</span>am,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>                        <span class="at">digits =</span> digits,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>                        <span class="at">continuous_fn =</span> describeMedian,</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>                        <span class="at">header_count =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>                        ...)</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  </span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>}</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>t1 <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>t1[[<span class="st">&quot;Gas&quot;</span>]] <span class="ot">&lt;-</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  <span class="fu">getTable1Stats</span>(mtcars<span class="sc">$</span>mpg)</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>  </span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>t1[[<span class="st">&quot;Weight&amp;dagger;&quot;</span>]] <span class="ot">&lt;-</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>  <span class="fu">getTable1Stats</span>(mtcars<span class="sc">$</span>wt)</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>t1[[<span class="st">&quot;Color&quot;</span>]] <span class="ot">&lt;-</span> </span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>  <span class="fu">getTable1Stats</span>(mtcars<span class="sc">$</span>col)</span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="co"># If we want to use the labels set in the beginning</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="co"># we add an element without a name</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>t1 <span class="ot">&lt;-</span> <span class="fu">c</span>(t1,</span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a>        <span class="fu">list</span>(<span class="fu">getTable1Stats</span>(mtcars<span class="sc">$</span>gear)))</span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="fu">mergeDesc</span>(t1,</span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a>          <span class="at">htmlTable_args =</span> <span class="fu">list</span>(<span class="at">caption  =</span> <span class="st">&quot;Basic descriptive statistics from the mtcars dataset&quot;</span>,</span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a>                                <span class="at">tfoot =</span> <span class="st">&quot;&amp;dagger; The weight is in 10&lt;sup&gt;3&lt;/sup&gt; kg&quot;</span>))</span></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
