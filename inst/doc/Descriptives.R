@@ -1,4 +1,4 @@
-## ---- include=FALSE-----------------------------------------------------------
+## ----include=FALSE------------------------------------------------------------
 library(magrittr)
 library(dplyr)
 library(Gmisc)
@@ -70,7 +70,7 @@ mtcars %>%
   htmlTable(caption  = "Basic descriptive statistics from the mtcars dataset",
             tfoot = "&dagger; The weight is in 10<sup>3</sup> kg")
 
-## ---- warning=FALSE-----------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 mtcars %>% 
   getDescriptionStatsBy(mpg, 
                         wt,
@@ -84,7 +84,7 @@ mtcars %>%
                         statistics = TRUE) %>% 
   htmlTable(caption  = "Basic descriptive statistics from the mtcars dataset")
 
-## ---- warning=FALSE-----------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 mtcars %>% 
   getDescriptionStatsBy(mpg, 
                         wt,

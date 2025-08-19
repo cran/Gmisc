@@ -1,7 +1,7 @@
 ## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 
-## ---- fig.height = 7, fig.width = 6-------------------------------------------
+## ----fig.height = 7, fig.width = 6--------------------------------------------
 library(Gmisc, quietly = TRUE)
 library(glue)
 library(htmlTable)
@@ -90,7 +90,7 @@ boxPropGrob("A box with proportions",
             "Left side", "Right side",
             prop = .7)
 
-## ---- fig.height = 3, fig.width = 4-------------------------------------------
+## ----fig.height = 3, fig.width = 4--------------------------------------------
 grid.newpage()
 smpl_bx <- boxGrob(
   label = "A simple box",

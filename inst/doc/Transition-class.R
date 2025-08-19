@@ -49,7 +49,7 @@ for (i in 1:length(Ch_classes)){
     factor(levels = c("A", "B", "C"))
 }
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 knitr::opts_chunk$set(message = FALSE, 
                       warnings = FALSE)
 knitr::opts_chunk$set(fig.height = 5, fig.width = 5)
