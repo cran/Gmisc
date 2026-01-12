@@ -6,67 +6,86 @@
 \alias{spreadHorizontal}
 \title{Spread boxes}
 \usage{
-spreadVertical(..., .from = NULL, .to = NULL, .type = c("between", "center"))
+spreadVertical(
+  ...,
+  .from = NULL,
+  .to = NULL,
+  .margin = unit(0, "npc"),
+  .type = c("between", "center"),
+  .subelement = NULL
+)
 
-spreadHorizontal(..., .from = NULL, .to = NULL, .type = c("between", "center"))
+spreadHorizontal(
+  ...,
+  .from = NULL,
+  .to = NULL,
+  .margin = unit(0, "npc"),
+  .type = c("between", "center"),
+  .subelement = NULL
+)
 }
 \arguments{
 \item{...}{A set of boxes to spread. Can also be a \code{list} of boxes.}
 
-\item{.from}{A box that the spread originates from. If left empty the entire \code{viewport} will be used.}
+\item{.from}{Starting point of the span. Can be a box, a coordinate/unit, or a
+numeric value interpreted as \code{npc}. If only \code{.from} is provided, \code{.to} defaults
+to \verb{1 npc}.}
 
-\item{.to}{A box that the spread ends at. If left empty the entire \code{viewport} will be used.}
+\item{.to}{Ending point of the span. Can be a box, a coordinate/unit, or a
+numeric value interpreted as \code{npc}. If only \code{.to} is provided, \code{.from} defaults
+to \verb{0 npc}.}
 
-\item{.type}{If \code{between} the space between the boxes will be identical while
-\code{center} has each box's center is equally distributed.}
+\item{.margin}{Optional padding applied at both ends of the span. Can be a
+\code{\link[grid:unit]{grid::unit}} or a numeric value interpreted as \code{npc}. Applied whether the
+span comes from \code{.from} / \code{.to} or the viewport.}
+
+\item{.type}{If \code{between}, the space \emph{between} boxes is identical. If \code{center},
+the centers of the boxes are equally distributed across the span.}
+
+\item{.subelement}{If a \code{list} of boxes is provided, this parameter can be used
+to target a specific element (by name or index) for the spreading operation.
+The function will then return the original list with the targeted element
+replaced by its spread version.}
 }
 \value{
-\code{list} with the boxes that have been spread
+A \code{list} with the boxes that have been spread.
 }
 \description{
-Spreads a set of \code{\link{boxGrob}}/\code{\link{boxPropGrob}} in either horizontal or vertical direction.
+Spreads a set of \code{\link{boxGrob}}/\code{\link{boxPropGrob}} in either horizontal or vertical
+direction within a given span.
+}
+\details{
+The span can be defined explicitly using \code{.from} / \code{.to}, or implicitly by the
+current viewport. Numeric values are interpreted as proportions of the viewport
+(\code{npc} units).
 }
 \examples{
 library(grid)
 grid.newpage()
 
-box1 <- boxGrob("B1", x = .2, y = .8)
-box2 <- boxGrob("B2\n\n\neach\nbox\neven\nspace\nbetween", x = .2, y = .8)
-box3 <- boxGrob("B3", x = .2, y = .8)
-box4 <- boxGrob("B4", x = .2, y = .8)
-box5 <- boxGrob("B5", x = .2, y = .8)
+# Create a set of boxes
+start <- boxGrob("Top", x = .5, y = .8)
+end <- boxGrob("Bottom", x = .5, y = .2)
+side <- boxPropGrob("Side", "Left", "Right", prop = .3, x = .2, y = .8)
+exclude <- boxGrob("Exclude:\n - Too sick\n - Prev. surgery", x = .8, y = .5, just = "left")
 
-spread_boxes <- spreadVertical(box1,
-                               box2,
-                               box3,
-                               a = box4,
-                               box5, 
-                               .type = "between")
-for (b in spread_boxes) {
-  print(b)
-}
+# We can chain the spread operations
+boxes <- spreadVertical(
+  start = start,
+  middle = list(side, exclude),
+  end = end
+) |>
+  spreadHorizontal(.subelement = "middle", .from = 0.2, .to = 0.8)
 
-box1 <- boxGrob("B1\n\nanother group\ncenter oriented", x = .6, y = .8)
-box2 <- boxGrob("B2", x = .6, y = .8)
-box3 <- boxGrob("B3", x = .6, y = .8)
-box4 <- boxGrob("B4", x = .6, y = .8)
-box5 <- boxGrob("B5", x = .6, y = .8)
-
-spread_boxes <- spreadVertical(box1,
-                               box2,
-                               box3,
-                               a = box4,
-                               box5, 
-                               .type = "center")
-for (b in spread_boxes) {
-  print(b)
-}
+# Now we can print them all at once
+boxes
 }
 \seealso{
 Other flowchart components: 
 \code{\link{align}},
 \code{\link{boxGrob}()},
 \code{\link{boxPropGrob}()},
+\code{\link{boxShapes}},
 \code{\link{connectGrob}()},
 \code{\link{coords}()},
 \code{\link{distance}()},

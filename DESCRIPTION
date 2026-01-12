@@ -1,9 +1,11 @@
 Package: Gmisc
-Version: 3.0.4
+Version: 3.1.0
 Title: Descriptive Statistics, Transition Plots, and More
 Authors@R: c(
     person(given = "Max", family = "Gordon",
            email = "max@gforge.se", role = c("aut", "cre")))
+Author: Max Gordon [aut, cre]
+Maintainer: Max Gordon <max@gforge.se>
 Description: Utilities for common medical-statistics graphics
     and tables, including automatic creation of publication-ready "Table 1"
     summaries; transition (Sankey) plots; flow-chart helpers that extend the
@@ -21,9 +23,7 @@ Encoding: UTF-8
 NeedsCompilation: yes
 LinkingTo: Rcpp
 VignetteBuilder: knitr
-RoxygenNote: 7.3.2
-Packaged: 2025-08-19 07:53:57 UTC; max
-Author: Max Gordon [aut, cre]
-Maintainer: Max Gordon <max@gforge.se>
+RoxygenNote: 7.3.3
+Packaged: 2026-01-11 21:09:42 UTC; max
 Repository: CRAN
-Date/Publication: 2025-08-19 09:30:15 UTC
+Date/Publication: 2026-01-12 06:11:05 UTC
