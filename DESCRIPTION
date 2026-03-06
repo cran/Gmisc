@@ -1,10 +1,10 @@
 Package: Gmisc
-Version: 3.1.0
+Version: 3.2.0
 Title: Descriptive Statistics, Transition Plots, and More
 Authors@R: c(
     person(given = "Max", family = "Gordon",
-           email = "max@gforge.se", role = c("aut", "cre")))
-Author: Max Gordon [aut, cre]
+           email = "max@gforge.se", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-8080-5815")))
 Maintainer: Max Gordon <max@gforge.se>
 Description: Utilities for common medical-statistics graphics
     and tables, including automatic creation of publication-ready "Table 1"
@@ -14,16 +14,18 @@ Description: Utilities for common medical-statistics graphics
 License: GPL (>= 3)
 URL: https://gforge.se
 BugReports: https://github.com/gforge/Gmisc/issues
-Depends: R (>= 4.1.0), Rcpp (>= 0.11.4), htmlTable (>= 2.0.0)
-Imports: abind, checkmate, forestplot, Hmisc, glue, grid, grDevices,
-        graphics, knitr, lattice, lubridate, magrittr, methods, rlang,
-        rmarkdown, stringr, stats, XML, yaml, utils
-Suggests: datasets, dplyr, jsonlite, testthat, tidyselect
+Depends: R (>= 4.1.0), htmlTable (>= 2.0.0)
+Imports: Rcpp (>= 0.11.4), abind, checkmate, forestplot, Hmisc, glue,
+        grid, grDevices, graphics, knitr, lattice, lubridate, magrittr,
+        methods, rlang, rmarkdown, stringr, stats, XML, yaml, utils
+Suggests: bench, vdiffr, datasets, dplyr, jsonlite, testthat,
+        tidyselect
 Encoding: UTF-8
 NeedsCompilation: yes
 LinkingTo: Rcpp
 VignetteBuilder: knitr
 RoxygenNote: 7.3.3
-Packaged: 2026-01-11 21:09:42 UTC; max
+Packaged: 2026-03-05 17:46:06 UTC; max
+Author: Max Gordon [aut, cre] (ORCID: <https://orcid.org/0000-0002-8080-5815>)
 Repository: CRAN
-Date/Publication: 2026-01-12 06:11:05 UTC
+Date/Publication: 2026-03-06 06:30:59 UTC

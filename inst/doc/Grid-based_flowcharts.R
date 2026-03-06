@@ -6,61 +6,50 @@ library(glue)
 library(htmlTable)
 library(grid)
 
-## ----fig.height = 7, fig.width = 8--------------------------------------------
-org_cohort <- boxGrob(glue("Stockholm population",
-                           "n = {pop}",
-                           pop = txtInt(1632798),
-                           .sep = "\n"))
-eligible <- boxGrob(glue("Eligible",
+## ----flowchart-example, fig.height = 7, fig.width = 8-------------------------
+grid.newpage()
+flowchart(source = glue("Stockholm population",
+                        "n = {pop}",
+                        pop = txtInt(1632798),
+                        .sep = "\n"),
+          eligible = glue("Eligible",
                           "n = {pop}",
-                           pop = txtInt(10032),
-                           .sep = "\n"))
-included <- boxGrob(glue("Randomized",
+                          pop = txtInt(10032),
+                          .sep = "\n"),
+          included = glue("Randomized",
                          "n = {incl}",
                          incl = txtInt(122),
-                         .sep = "\n"))
-grp_a <- boxGrob(glue("Treatment A",
-                      "n = {recr}",
-                      recr = txtInt(43),
-                      .sep = "\n"))
-
-grp_b <- boxGrob(glue("Treatment B",
-                      "n = {recr}",
-                      recr = txtInt(122 - 43 - 30),
-                      .sep = "\n"))
-
-excluded <- boxGrob(glue("Excluded (n = {tot}):",
-                         " - not interested: {uninterested}",
-                         " - contra-indicated: {contra}",
-                         tot = 30,
-                         uninterested = 12,
-                         contra = 30 - 12,
                          .sep = "\n"),
-                    just = "left")
-
-grid.newpage()
-vert <- spreadVertical(org_cohort,
-               eligible = eligible,
-               included = included,
-               grps = list(grp_a, grp_b)) |>
-  spreadHorizontal(.subelement = "grps")
-
-excluded <- moveBox(excluded,
-                    x = .8,
-                    y = coords(vert$included)$top + distance(vert$eligible, vert$included, half = TRUE, center = FALSE))
-
-for (i in 1:(length(vert) - 1)) {
-  from <- vert[[i]]
-  to <- vert[[i + 1]]
-  connectGrob(vert[[i]], vert[[i + 1]], type = ifelse(is.grob(to), "vert", "N")) |>
-    print()
-}
-
-connectGrob(vert$eligible, excluded, type = "L", label = "Excluded")
-
-# Print boxes
-vert
-excluded
+          groups = list(
+            glue("Treatment A",
+                 "n = {recr}",
+                 recr = txtInt(43),
+                 .sep = "\n"),
+            glue("Treatment B",
+                 "n = {recr}",
+                 recr = txtInt(122 - 43 - 30),
+                 .sep = "\n")
+          )) |>
+  spread(axis = "y") |>
+  spread(subelement = "groups", axis = "x") |>
+  insert(list(excluded = boxHeaderGrob(header = glue("Excluded (n = {tot}):", tot = 30),
+                          body = glue(" - not interested: {uninterested}",
+                                      " - contra-indicated: {contra}",
+                                      uninterested = 12,
+                                      contra = 30 - 12,
+                                      .sep = "\n"),
+                          bjust = "left",
+                          header_gp = getOption("boxGrobTxt", default = gpar(
+                            color = "black",
+                            cex = 1
+                          )))),
+         after = "eligible",
+         name = "excluded") |>
+  move(name = "excluded", x = .8) |>
+  connect("source", "eligible", type = "vert") |>
+  connect("eligible", "included", type = "vert") |>
+  connect("included", "groups", type = "N") |>
+  connect("eligible", "excluded", type = "L", label = "Excluded")
 
 ## ----basic_box, fig.height = 1.5, fig.width = 3, message = FALSE--------------
 grid.newpage()
@@ -180,7 +169,7 @@ r <- boxServerGrob("Server", box_gp = gpar(fill = "#E8F0FF"))
 
 # arrange and draw
 boxes <- list(decision = d_rounded, outcomes = list(e, r)) |>
-  spreadHorizontal(.from = unit(.1, "npc"), .to = unit(.9, "npc"), .subelement = "outcomes") |>
+  spreadHorizontal(from = unit(.1, "npc"), to = unit(.9, "npc"), subelement = "outcomes") |>
   spreadVertical() |>
   print()
 
@@ -226,9 +215,9 @@ row3 <- list(
 )
 
 # Spread each row across the horizontal span
-spreadHorizontal(row1, .from = unit(.05, "npc"), .to = unit(.95, "npc"))
-spreadHorizontal(row2, .from = unit(.05, "npc"), .to = unit(.95, "npc"))
-spreadHorizontal(row3, .from = unit(.05, "npc"), .to = unit(.95, "npc"))
+spreadHorizontal(row1, from = unit(.05, "npc"), to = unit(.95, "npc"))
+spreadHorizontal(row2, from = unit(.05, "npc"), to = unit(.95, "npc"))
+spreadHorizontal(row3, from = unit(.05, "npc"), to = unit(.95, "npc"))
 
 ## ----"Connected boxes", fig.width = 7, fig.height = 5-------------------------
 grid.newpage()
@@ -291,23 +280,31 @@ sub_side_right
 odd
 odd2
 
-## ----connect_multi, fig.width = 9, fig.height = 4-----------------------------
+## ----connect_multi, fig.width = 4, fig.height = 4-----------------------------
 grid.newpage()
 
 # Three upstream boxes + one side box
-a1 <- boxGrob("A1", x = .15, y = .85, box_gp = gpar(fill = "#E6F2FF"))
-a2 <- boxGrob("A2", x = .45, y = .85, box_gp = gpar(fill = "#E6F2FF"))
-a3 <- boxGrob("A3", x = .75, y = .85, box_gp = gpar(fill = "#E6F2FF"))
-b_side <- boxGrob("B",  x = .82, y = .50, box_gp = gpar(fill = "#FFF3BF"))
+a_boxes <- paste("A", 1:3) |>
+  lapply(\(x) boxGrob(x, box_gp = gpar(fill = "#E6F2FF"))) |>
+  spreadHorizontal(from = unit(.1, "npc"), to = unit(1, "npc") - unit(1, "cm")) |>
+  alignVertical(position="top",
+                reference = unit(1, "npc")) |>
+  print()
+
+b_side <- boxGrob("B",  y = .70, box_gp = gpar(fill = "#FFF3BF")) |>
+  moveBox(x = unit(1, "npc"),
+          just = 1) |>
+  print()
 
 # Target box
-b <- boxGrob("B", x = .50, y = .18, box_gp = gpar(fill = "#D3F9D8"))
+c <- boxGrob("C", x = .50, box_gp = gpar(fill = "#D3F9D8"), width = unit(4, "cm")) |>
+  moveBox(y = unit(0, "npc"),
+          just = "bottom") |>
+  print()
 
-# Draw boxes
-a1; a2; a3; b_side; b
 
 # Many -> one: merge on top with evenly distributed attachment points + margin
-connectGrob(list(a1, a2, a3, b_side), b,
+connectGrob(c(a_boxes, list(b_side)), c,
             type = "fan_in_top",
             margin = 4)
 
@@ -347,22 +344,22 @@ grid.newpage()
 align_1
 alignHorizontal(reference = align_1,
                 b1, b2, b3,
-                .position = "left")
+                position = "left")
 
 align_2
 alignHorizontal(reference = align_2,
                 b1, b2, b3,
-                .position = "center",
-                .sub_position = "left")
+                position = "center",
+                sub_position = "left")
 alignHorizontal(reference = align_2,
                 b1, b2, b3,
-                .position = "left",
-                .sub_position = "right")
+                position = "left",
+                sub_position = "right")
 
 align_3
 alignHorizontal(reference = align_3,
                 b1, b2, b3,
-                .position = "right")
+                position = "right")
 
 ## ----vertical_alignment, fig.width=10, fig.height=6---------------------------
 align_1 <- boxGrob("Align 1\nvertical\ntext",
@@ -401,19 +398,19 @@ grid.newpage()
 align_1
 alignVertical(reference = align_1,
               b1, b2, b3,
-              .position = "top")
+              position = "top")
 
 align_2
 alignVertical(reference = align_2,
               b1, b2, b3,
-              .position = "center")
+              position = "center")
 
 align_3
 alignVertical(reference = align_3,
               b1, b2, b3,
-              .position = "bottom")
+              position = "bottom")
 
-## ----horizontal_spread, fig.width = 11, fig.height = 6------------------------
+## ----horizontal_spread, fig.width = 11, fig.height = 8------------------------
 b1 <- boxGrob("B1", y = .85, x = .1, bjust = c(0, 0))
 b2 <- boxGrob("B2", y = .65, x = .6)
 b3 <- boxGrob("B3", y = .45, x = .6)
@@ -440,7 +437,7 @@ txtOut <- function(txt, y_top) {
 }
 
 drawRow <- function(label, row_y, spread_args = list()) {
-  row <- alignVertical(reference = row_y, b1, b2, b3, b4, .position = "top")
+  row <- alignVertical(reference = row_y, b1, b2, b3, b4, position = "top")
   txtOut(label, coords(row[[1]])$top)
   do.call(spreadHorizontal, c(list(row), spread_args))
 }
@@ -451,18 +448,18 @@ grid.newpage()
 
 drawRow("Basic (viewport)", rowYs[1])
 drawRow("From–to + margin (numeric = npc)", rowYs[2],
-        spread_args = list(.from = .2, .to = .7, .margin = .05))
-drawRow("Only .to (defaults .from = 0)", rowYs[3],
-        spread_args = list(.to = .7))
-drawRow("Only .from (defaults .to = 1)", rowYs[4],
-        spread_args = list(.from = .2))
+        spread_args = list(from = .2, to = .7, margin = .05))
+drawRow("Only to (defaults from = 0)", rowYs[3],
+        spread_args = list(to = .7))
+drawRow("Only from (defaults to = 1)", rowYs[4],
+        spread_args = list(from = .2))
 
 # Row 5: Between boxes (box-to-box span)
 row5_y <- rowYs[5]
-row5 <- alignVertical(reference = row5_y, b1, b2, b3, b4, .position = "top")
+row5 <- alignVertical(reference = row5_y, b1, b2, b3, b4, position = "top")
 txtOut("Between boxes", coords(row5[[1]])$top)
 
-span <- alignVertical(reference = row5_y, from  = from, to = to, .position = "top")
+span <- alignVertical(reference = row5_y, from  = from, to = to, position = "top")
 span
 spreadHorizontal(row5, .from = span$from, .to = span$to)
 
@@ -474,13 +471,13 @@ bottom_to <- moveBox(to, x = coords(from)$left, y = 0, just = c(0, 0))
 bottom_from
 bottom_to
 
-row6 <- alignVertical(reference = bottom_from, b1, b2, b3, b4, .position = "bottom")
+row6 <- alignVertical(reference = bottom_from, b1, b2, b3, b4, position = "bottom")
 txtOut("Reverse box order + center", coords(row6[[4]])$top)
 
 spreadHorizontal(row6,
-                 .from = bottom_from,
-                 .to = bottom_to,
-                 .type = "center")
+                 from = bottom_from,
+                 to = bottom_to,
+                 type = "center")
 
 
 
@@ -514,23 +511,174 @@ grid.newpage()
 txtOut("Basic", b1)
 alignHorizontal(reference = b1,
                 b1, b2, b3, b4,
-                .position = "left") |>
+                position = "left") |>
   spreadVertical()
 
 txtOut("From-to", b2)
 alignHorizontal(reference = b2,
                 b1, b2, b3, b4,
-                .position = "left") |>
-  spreadVertical(.from = .2,
-                 .to = .7)
+                position = "left") |>
+  spreadVertical(from = .2,
+                 to = .7)
 
 txtOut("From-to with center and reverse the box order", b3)
 alignHorizontal(reference = b3,
                 b1, b2, b3, b4,
-                .position = "left") |>
-  spreadVertical(.from = .7,
-                 .to = .2,
-                 .type = "center")
+                position = "left") |>
+  spreadVertical(from = .7,
+                 to = .2,
+                 type = "center")
+
+## ----complex_nested, fig.width = 7, fig.height = 8----------------------------
+# Helper function to convert nested structure to grobs
+make_boxes <- function(x) {
+  if (is.list(x) && !inherits(x, "box_header")) {
+    return(lapply(x, make_boxes))
+  }
+
+  if (inherits(x, "box_header")) {
+    return(do.call(boxHeaderGrob, x))
+  }
+
+  # Simple text box fallback
+  args <- attr(x, "args")
+  if (is.null(args)) return(boxGrob(label = x))
+
+  args$label <- x
+  do.call(boxGrob, args)
+}
+
+# Define styling for different elements
+arm_a_style <- list(
+  header = gpar(fill = "#E8F5E9", col = "#2E7D32", lwd = 1.4),
+  box = gpar(fill = "#F1F8E9", col = "#43A047")
+)
+
+arm_b_style <- list(
+  header = gpar(fill = "#FFF8E1", col = "#EF6C00", lwd = 1.4),
+  box = gpar(fill = "#FFFDE7", col = "#F9A825")
+)
+
+# Build flowchart structure
+flowchart <- list(
+  # Shared inclusion criteria
+  criteria = structure(
+    list(
+      header = "Inclusion Criteria",
+      body = paste(
+        "• Adults aged 18-65",
+        "• Confirmed diagnosis",
+        "• Written informed consent",
+        "• No contraindications",
+        "• Available for 6-month follow-up",
+        sep = "\n"
+      ),
+      box_gp = gpar(fill = "#E3F2FD", col = "#1E88E5", lwd = 1.4),
+      body_gp = gpar(fontsize = 10)
+    ),
+    class = "box_header"
+  ),
+
+  # Two treatment arms
+  arms = list(
+    arm_a = list(
+      # Arm header
+      structure("Intensive Protocol", args = list(
+        box_gp = arm_a_style$header,
+        txt_gp = gpar(fontsize = 11, fontface = "bold")
+      )),
+
+      # Timeline boxes
+      structure(list(
+        header = "Week 0-1",
+        body = "• Daily sessions\n• Supervised therapy\n",
+        box_gp = arm_a_style$box,
+        body_gp = gpar(fontsize = 9.5)
+      ), class = "box_header"),
+
+      structure(list(
+        header = "Week 2-4",
+        body = "• 3× weekly sessions\n• Progressive loading",
+        box_gp = arm_a_style$box,
+        body_gp = gpar(fontsize = 9.5)
+      ), class = "box_header"),
+
+      structure(list(
+        header = "Week 5-8",
+        body = "• Home program\n• Monthly check-ins\n• Return to activity",
+        box_gp = arm_a_style$box,
+        body_gp = gpar(fontsize = 9.5)
+      ), class = "box_header")
+    ),
+
+    arm_b = list(
+      # Arm header
+      structure("Standard Care", args = list(
+        box_gp = arm_b_style$header,
+        txt_gp = gpar(fontsize = 11, fontface = "bold")
+      )),
+
+      # Timeline boxes - different schedule
+      structure(list(
+        header = "Month 0",
+        body = "• Initial consultation\n• Exercise booklet",
+        box_gp = arm_b_style$box,
+        body_gp = gpar(fontsize = 9.5)
+      ), class = "box_header"),
+
+      structure(list(
+        header = "Month 3",
+        body = "• Follow-up visit\n• Progress review",
+        box_gp = arm_b_style$box,
+        body_gp = gpar(fontsize = 9.5)
+      ), class = "box_header"),
+
+      structure(list(
+        header = "Month 6",
+        body = "• Final assessment\n• Discharge planning",
+        box_gp = arm_b_style$box,
+        body_gp = gpar(fontsize = 9.5)
+      ), class = "box_header")
+    )
+  )
+)
+
+# Convert to grobs and layout
+grid.newpage()
+boxes <- flowchart |>
+  make_boxes() |>
+  spreadVertical() |>
+  spreadHorizontal(subelement = "arms", from = 0.15, to = 0.85) |>
+  spreadVertical(subelement = c("arms", "arm_a"), from = 0.65) |>
+  spreadVertical(subelement = c("arms", "arm_b"), from = 0.65) |>
+  print()
+
+# Connect criteria to both arms
+connectGrob(boxes$criteria, boxes$arms, type = "N")
+
+# Connect timeline within each arm
+for (arm_name in names(boxes$arms)) {
+  arm_boxes <- boxes$arms[[arm_name]]
+  for (i in 2:length(arm_boxes)) {
+    connectGrob(arm_boxes[[i-1]], arm_boxes[[i]], type = "v") |> print()
+  }
+}
+
+## ----s3_api_example, fig.height=8, fig.width=6, eval=FALSE--------------------
+#  grid.newpage()
+#  
+#  # Define the nodes
+#  b1 <- boxGrob("Start", y = 0.8)
+#  b2 <- boxGrob("Process", y = 0.5)
+#  b3 <- boxGrob("End", y = 0.2)
+#  
+#  # Pipeline: list -> align -> connect -> print
+#  list(start = b1, process = b2, end = b3) |>
+#    align(axis = "y") |>
+#    spread(axis = "x") |>
+#    connect("start", "process", type = "horizontal") |>
+#    connect("process", "end", type = "horizontal") |>
+#    print()
 
 ## ----math_expressions, fig.width=6, fig.height=3------------------------------
 grid.newpage()
@@ -538,32 +686,33 @@ grid.newpage()
 # Expressions #
 ###############
 # Font style
-alignVertical(
-  reference = 1,
-  .position = "top",
-  boxGrob(expression(bold("Bold text"))),
-  boxGrob(expression(italic("Italics text"))),
-  boxGrob(expression(paste("Mixed: ", italic("Italics"), " and ", bold("bold"))))) |>
+list(expression(bold("Bold text")),
+     expression(italic("Italics text")),
+     expression(paste("Mixed: ", italic("Italics"), " and ", bold("bold")))) |>
+  lapply(boxGrob) |>
+  alignVertical(reference = unit(1, "npc"),
+                position = "top") |>
   spreadHorizontal()
 
 # Math
-alignVertical(
-  reference = .5,
-  boxGrob(expression(paste("y = ", beta[0], " + ", beta[1], X[1], " + ", beta[2], X[2]^2))),
-  boxGrob(expression(sum(n, i == 1, x) %subset% " \u211D")),
-  boxGrob(expression(beta ~~ gamma ~~ Gamma))) |>
+list(expression(paste("y = ", beta[0], " + ", beta[1], X[1], " + ", beta[2], X[2]^2)),
+     expression(paste(hat(mu) == sum(frac(x[i], n), i == 1, n))),
+     expression(paste(int(a, b, f(x) * dx) == F(b) - F(a)))) |>
+  lapply(boxGrob) |>
+  alignVertical(reference = unit(0.5, "npc"),
+                position = "center") |>
   spreadHorizontal()
 
 ##########
 # Quotes #
 ##########
 a = 5
-alignVertical(
-  reference = 0,
-  .position = "bottom",
-  bquote(alpha == theta[1] * .(a) + ldots) |> boxGrob(),
-  paste("argument", sQuote("x"), "\nmust be non-zero") |> boxGrob()) |>
-  spreadHorizontal(.from = .2, .to = .8)
+list(bquote(alpha == theta[1] * .(a) + ldots),
+     paste("argument", sQuote("x"), "\nmust be non-zero")) |>
+  lapply(boxGrob) |>
+  alignVertical(reference = unit(0, "npc"),
+                position = "bottom") |>
+  spreadHorizontal(from = .2, to = .8)
 
 ## ----basic_plot, fig.height = 2, fig.width = 2--------------------------------
 # Load the grid library
@@ -604,4 +753,70 @@ pushViewport(viewport(x = 0, y = .6, just = "left", width = .4, height = .4, ang
 grid.rect(gp = gpar(fill = "lightblue")) # A translucent box to indicate the new viewport
 grid.draw(lg)
 popViewport()
+
+## ----complex_example, fig.height = 9, fig.width = 9---------------------------
+# Define the boxes
+org_cohort <- glue("Proximal humerus fracture",
+                   "  - \u2265 18 years",
+                   "  - \u2264 4 weeks of trauma",
+                   "  - Not pathological",
+                   .sep = "\n") |>
+  boxGrob(just = "left",
+          box_gp = gpar(fill = "#E3F2FD"))
+
+surgery <- glue("Surgery",
+                "  - Direct (\u2248 4%)",
+                "  - Delayed (\u2248 4%)",
+                .sep = "\n") |>
+  boxGrob(just = "left",
+          box_gp = gpar(fill = "#F8BBD0"))
+
+randomize <- boxGrob("Non-surgical\nRandomise",
+                     box_gp = gpar(fill = "#FFF3E0"))
+
+treatments <- list(early = boxGrob("Early rehab",
+                                   box_gp = gpar(fill = "#DCEDC8")),
+                   late = boxGrob("Late rehab",
+                                  box_gp = gpar(fill = "#DCEDC8")),
+                   obs = boxGrob("Observation",
+                                 box_gp = gpar(fill = "#E0E0E0")))
+
+early_followup <- glue("Early follow-up",
+                       "  - 2 weeks [PNRS]",
+                       "  - 4 weeks [PNRS]",
+                       .sep = "\n") |>
+  boxGrob(just = "left",
+          box_gp = gpar(fill = "#E0F7FA"))
+
+late_followup <- glue("Late follow-up",
+                      "  - 2-10 months (random) [OSS, PNRS]",
+                      "  - 1 year [OSS, PNRS, accelerometer]",
+                      "  - 2 years [OSS, PNRS]",
+                      "  - 5 years [OSS, PNRS]",
+                      .sep = "\n") |>
+  boxGrob(just = "left",
+                       box_gp = gpar(fill = "#E0F7FA"))
+
+# Create the flowchart
+grid.newpage()
+flowchart(start = org_cohort,
+          step_1 = list(surgery = surgery,
+                        `non-surgical` = randomize),
+          treatment = treatments,
+          early_followup = early_followup,
+          followup = late_followup) |>
+  spread(axis = "y") |>
+  spread(axis = "x", subelement = "step_1") |>
+  spread(axis = "x", subelement = "treatment", from = 0.35) |>
+  align(axis = "x",
+        reference = c("treatment", "late"),
+        subelement = c("step_1", "non-surgical")) |>
+  connect(from = "start", to = "step_1", type = "N") |>
+  connect(from = "step_1$non-surgical", to = "treatment", type = "N") |>
+  connect(from = "treatment", to = "early_followup", type = "fan_in_center") |>
+  connect(from = "early_followup", to = "followup", type = "v") |>
+  connect(from = "early_followup", to = "step_1$surgery", type = "Z",
+          label = "Crossover\nto surgery") |>
+  connect(from = "step_1$surgery", to = "followup", type = "L") |>
+  print()
 
