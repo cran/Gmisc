@@ -1,5 +1,5 @@
 Package: Gmisc
-Version: 3.2.0
+Version: 3.3.0
 Title: Descriptive Statistics, Transition Plots, and More
 Authors@R: c(
     person(given = "Max", family = "Gordon",
@@ -24,8 +24,8 @@ Encoding: UTF-8
 NeedsCompilation: yes
 LinkingTo: Rcpp
 VignetteBuilder: knitr
-RoxygenNote: 7.3.3
-Packaged: 2026-03-05 17:46:06 UTC; max
+Config/roxygen2/version: 8.0.0
+Packaged: 2026-05-30 11:25:23 UTC; max
 Author: Max Gordon [aut, cre] (ORCID: <https://orcid.org/0000-0002-8080-5815>)
 Repository: CRAN
-Date/Publication: 2026-03-06 06:30:59 UTC
+Date/Publication: 2026-06-02 05:10:02 UTC

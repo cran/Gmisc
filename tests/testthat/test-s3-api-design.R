@@ -195,3 +195,93 @@ test_that("Complex chaining example", {
   conns <- attr(res, "connections")
   expect_gte(length(conns), 4)
 })
+
+test_that("connect() maps list-to-list targets pairwise", {
+  fc <- flowchart(
+    rando = "Randomised N = 100",
+    groups = list(
+      "Group1\nn = 50",
+      "Group2\nn = 50"
+    ),
+    groups2 = list(
+      "Analysed\nn = 49",
+      "Analysed\nn = 48"
+    )
+  ) |>
+    spread(axis = "y", margin = unit(0.02, "npc")) |>
+    spread(subelement = "groups", axis = "x", margin = unit(.05, "npc")) |>
+    spread(subelement = "groups2", axis = "x", margin = unit(.05, "npc")) |>
+    connect("groups", "groups2", type = "vertical")
+
+  conns <- attr(fc, "connections")
+  expect_equal(length(conns), 1)
+  expect_s3_class(conns[[1]], "connect_boxes_list")
+  expect_equal(length(conns[[1]]), 2)
+
+  end_x <- vapply(conns[[1]], function(g) {
+    line <- attr(g, "line")
+    convertX(line$x[length(line$x)], "npc", valueOnly = TRUE)
+  }, numeric(1))
+
+  target_x <- vapply(fc$groups2, function(b) {
+    convertX(coords(b)$x, "npc", valueOnly = TRUE)
+  }, numeric(1))
+
+  expect_equal(end_x, target_x, tolerance = 1e-6)
+})
+
+test_that("connect() errors on unequal list-to-list lengths", {
+  fc <- flowchart(
+    from = list("A", "B"),
+    to = list("C")
+  )
+
+  expect_error(
+    connect(fc, "from", "to", type = "vertical"),
+    "must have the same length"
+  )
+})
+
+test_that("consort-style grouped pipeline with excluded branch remains stable", {
+  library(grid)
+
+  fc <- flowchart(
+    rando = "Randomised N = 100",
+    groups = list(
+      "Group1\nn = 50",
+      "Group2\nn = 50"
+    ),
+    groups2 = list(
+      "Analysed\nn = 49",
+      "Analysed\nn = 48"
+    ),
+    groups3 = list(
+      "Excluded\nn = 1",
+      "Excluded\nn = 2"
+    )
+  ) |>
+    spread(axis = "y", margin = unit(0.02, "npc")) |>
+    spread(subelement = "groups", axis = "x", margin = unit(.3, "npc")) |>
+    spread(subelement = "groups2", axis = "x", margin = unit(.1, "npc")) |>
+    spread(subelement = "groups3", axis = "x", margin = unit(.3, "npc")) |>
+    move(name = "groups2", x = .6) |>
+    connect("rando", "groups", type = "N") |>
+    connect("groups", "groups2", type = "L") |>
+    connect("groups", "groups3", type = "vert")
+
+  expect_s3_class(fc, "Gmisc_list_of_boxes")
+  expect_true(all(c("groups", "groups2", "groups3") %in% names(fc)))
+
+  conns <- attr(fc, "connections")
+  expect_type(conns, "list")
+  expect_equal(length(conns), 3)
+
+  expect_silent({
+    aligned <- fc |>
+      alignVertical("groups", subelement = "groups2")
+  })
+
+  expect_s3_class(aligned, "Gmisc_list_of_boxes")
+  expect_true(all(c("groups", "groups2", "groups3") %in% names(aligned)))
+  expect_equal(length(aligned$groups2), 2)
+})

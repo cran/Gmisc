@@ -81,7 +81,7 @@ box_txt <-
                txt = c("A", "B", "C"), 
                n = prop.table(colSums(trn_mtrx))*100))
 transitionPlot(trn_mtrx, 
-               main = "Charnley class changess",
+               main = "Charnley class changes",
                box_label = c("Before", "After"),
                box_txt = box_txt,
                cex = 1.2,

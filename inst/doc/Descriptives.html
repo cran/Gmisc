@@ -12,7 +12,7 @@
 
 <meta name="author" content="Max Gordon" />
 
-<meta name="date" content="2026-03-05" />
+<meta name="date" content="2026-05-30" />
 
 <title>Descriptives statistics for Table 1</title>
 
@@ -321,7 +321,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; } </style>
 
 <h1 class="title toc-ignore">Descriptives statistics for Table 1</h1>
 <h4 class="author">Max Gordon</h4>
-<h4 class="date">2026-03-05</h4>
+<h4 class="date">2026-05-30</h4>
 
 
 <div id="TOC">
@@ -644,13 +644,13 @@ Car color
 </table>
 <div id="integration-with-htmltable" class="section level2">
 <h2>Integration with <code>htmlTable</code></h2>
-<p>Key to having a good descriptive statistics is to be able to output
-it into a table. I usually rely on <code>htmlTabl</code> for all my
-table requirements as it has a nice set of advanced options that allow
-us to get publication ready tables that can simply be copy-pasted into
-our paper. <em>Note</em> that we here use html code † that we then
-explain in the footer. If we specify a name to the parameters like this
-we override the labels previously set.</p>
+<p>Key to having good descriptive statistics is to be able to output it
+into a table. I usually rely on <code>htmlTable</code> for all my table
+requirements as it has a nice set of advanced options that allow us to
+get publication ready tables that can simply be copy-pasted into our
+paper. <em>Note</em> that we here use html code † that we then explain
+in the footer. If we specify a name to the parameters like this we
+override the labels previously set.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                        <span class="st">`</span><span class="at">Weight&amp;dagger;</span><span class="st">`</span> <span class="ot">=</span> wt,</span>
@@ -987,10 +987,10 @@ Basic descriptive statistics from the mtcars dataset
 </div>
 <div id="p-values" class="section level1">
 <h1>P-values</h1>
-<p>Event though p-values are discouraged in the Table 1, they are <a href="https://doi.org/10.1177/1741826711421688">not uncommon</a>. I have
-therefore added basic statistics consisting that defaults to Fisher’s
-exact test for proportions and Wilcoxon rank sum test for continuous
-values.</p>
+<p>Even though p-values are discouraged in the Table 1, they are <a href="https://doi.org/10.1177/1741826711421688">not uncommon</a>. I have
+therefore added basic statistics consisting of tests that default to
+Fisher’s exact test for proportions and Wilcoxon rank sum test for
+continuous values.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">getDescriptionStatsBy</span>(mpg, </span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>                        wt,</span>
@@ -1036,7 +1036,7 @@ Gas
 23 (21 - 30)
 </td>
 <td style="text-align: center;">
-0.002
+0.001
 </td>
 </tr>
 <tr>

@@ -7,49 +7,161 @@ library(htmlTable)
 library(grid)
 
 ## ----flowchart-example, fig.height = 7, fig.width = 8-------------------------
+# Shared styling
+main_box_gp <- gpar(fill = "#ddeeff", col = "#336699", lwd = 1.5)
+group_box_gp <- gpar(fill = "#e8f4e8", col = "#2e7d32", lwd = 1.5)
+excl_box_gp  <- gpar(fill = "#fff8e1", col = "#cc8800", lwd = 1.2)
+main_con_gp  <- gpar(col = "#336699", lwd = 1.5, fill = "#336699")
+excl_con_gp  <- gpar(col = "#cc8800", lwd = 1.2, fill = "#cc8800")
+
 grid.newpage()
-flowchart(source = glue("Stockholm population",
-                        "n = {pop}",
-                        pop = txtInt(1632798),
-                        .sep = "\n"),
-          eligible = glue("Eligible",
-                          "n = {pop}",
-                          pop = txtInt(10032),
-                          .sep = "\n"),
-          included = glue("Randomized",
-                         "n = {incl}",
-                         incl = txtInt(122),
-                         .sep = "\n"),
-          groups = list(
-            glue("Treatment A",
-                 "n = {recr}",
-                 recr = txtInt(43),
-                 .sep = "\n"),
-            glue("Treatment B",
-                 "n = {recr}",
-                 recr = txtInt(122 - 43 - 30),
-                 .sep = "\n")
-          )) |>
+flowchart(
+  source = boxGrob(glue("Stockholm population\nn = {pop}", pop = txtInt(1632798)),
+                   box_gp = main_box_gp),
+  eligible = boxGrob(glue("Eligible\nn = {pop}", pop = txtInt(10032)),
+                     box_gp = main_box_gp),
+  included = boxGrob(glue("Randomized\nn = {incl}", incl = txtInt(122)),
+                     box_gp = main_box_gp),
+  groups = list(
+    boxGrob(glue("Treatment A\nn = {n}", n = txtInt(43)),        box_gp = group_box_gp),
+    boxGrob(glue("Treatment B\nn = {n}", n = txtInt(122-43-30)), box_gp = group_box_gp)
+  )) |>
   spread(axis = "y") |>
   spread(subelement = "groups", axis = "x") |>
-  insert(list(excluded = boxHeaderGrob(header = glue("Excluded (n = {tot}):", tot = 30),
-                          body = glue(" - not interested: {uninterested}",
-                                      " - contra-indicated: {contra}",
-                                      uninterested = 12,
-                                      contra = 30 - 12,
-                                      .sep = "\n"),
-                          bjust = "left",
-                          header_gp = getOption("boxGrobTxt", default = gpar(
-                            color = "black",
-                            cex = 1
-                          )))),
+  equalizeWidths(subelement = list("source", "eligible", "included")) |>
+  equalizeWidths(subelement = "groups") |>
+  insert(list(excluded = boxHeaderGrob(
+                header = glue("Excluded (n = {tot}):", tot = 30),
+                body   = glue(" - not interested: {n1}\n - contra-indicated: {n2}",
+                              n1 = 12, n2 = 18),
+                bjust      = "left",
+                box_gp     = excl_box_gp,
+                header_gp  = gpar(col = "#cc8800", cex = 1))),
          after = "eligible",
-         name = "excluded") |>
-  move(name = "excluded", x = .8) |>
-  connect("source", "eligible", type = "vert") |>
-  connect("eligible", "included", type = "vert") |>
-  connect("included", "groups", type = "N") |>
-  connect("eligible", "excluded", type = "L", label = "Excluded")
+         name  = "excluded") |>
+  move(subelement = "excluded", x = .8) |>
+  connect("eligible", "excluded", type = "L",    lty_gp = excl_con_gp, arrow_size = 3,
+          label = "Excluded") |>
+  connect("source",   "eligible", type = "vert", lty_gp = main_con_gp, arrow_size = 3,
+          smooth = TRUE) |>
+  connect("eligible", "included", type = "vert", lty_gp = main_con_gp, arrow_size = 3,
+          smooth = TRUE) |>
+  connect("included", "groups",   type = "N",    lty_gp = main_con_gp, arrow_size = 3,
+          smooth = TRUE)
+
+## ----consort_example, fig.width = 9, fig.height = 6---------------------------
+old_opts <- options(boxGrobTxtPadding = unit(3, "mm"))
+
+box_fill     <- gpar(fill = "#ddeeff", col = "#336699", lwd = 1.5)
+con_gp       <- gpar(col = "#336699", lwd = 1.5, fill = "#336699")
+side_gp      <- gpar(col = "#cc8800", lwd = 1.2, fill = "#cc8800")
+excl_fill    <- gpar(fill = "#fff8e1", col = "#cc8800", lwd = 1.2)
+badge_gp     <- gpar(fill = "#336699", col = NA)
+badge_txt_gp <- gpar(col = "white", cex = 0.65)
+
+# Arms span the inner portion; lost boxes flank outside on each side.
+# Using 0.28–0.72 keeps the arm centres far enough from the viewport edges
+# that the lost boxes' right/left edges don't cross the arm centres.
+left_from <- 0.28
+left_to   <- 0.72
+main_x    <- (left_from + left_to) / 2   # centre of the arms column (= 0.5)
+
+grid.newpage()
+flowchart(
+  assessed = boxGrob(
+    "Patients assessed for eligibility",
+    x = main_x, box_gp = box_fill,
+    badge_label = "840", badge_gp = badge_gp, badge_txt_gp = badge_txt_gp
+  ),
+  randomised = boxGrob(
+    "Randomised",
+    x = main_x, box_gp = box_fill,
+    badge_label = "126", badge_gp = badge_gp, badge_txt_gp = badge_txt_gp
+  ),
+  arms = list(
+    cast     = boxGrob("Randomised to\ncast immobilisation",
+                       box_gp = box_fill,
+                       badge_label = "62",
+                       badge_gp = badge_gp, badge_txt_gp = badge_txt_gp),
+    surgical = boxGrob("Randomised to\nsurgery",
+                       box_gp = box_fill,
+                       badge_label = "64",
+                       badge_gp = badge_gp, badge_txt_gp = badge_txt_gp)
+  ),
+  # Lost-to-follow-up: one per arm — spread from 0 to 1 so they land
+  # on the outside of each arm (left of cast, right of surgical)
+  lost = list(
+    lost_cast     = boxGrob("Lost to follow-up (n = 2)\n  1 No response\n  1 Other surgery",
+                            just = "left", box_gp = excl_fill),
+    lost_surgical = boxGrob("Lost to follow-up (n = 3)\n  2 No response\n  1 Other surgery",
+                            just = "left", box_gp = excl_fill)
+  ),
+  analysis = list(
+    analysis_cast     = boxGrob("Included in\nprimary analysis",
+                                box_gp = box_fill,
+                                badge_label = "60",
+                                badge_gp = badge_gp, badge_txt_gp = badge_txt_gp),
+    analysis_surgical = boxGrob("Included in\nprimary analysis",
+                                box_gp = box_fill,
+                                badge_label = "61",
+                                badge_gp = badge_gp, badge_txt_gp = badge_txt_gp)
+  )
+) |>
+  # Vertical spacing — extra margin to keep badges from being clipped at the top
+  spread(axis = "y", margin = unit(5, "mm")) |>
+  # Make arms and analysis boxes the same width so the same from/to spread
+  # places their centres at matching x positions (otherwise the wider arm text
+  # shifts centres relative to the narrower analysis text).
+  # Alternative: skip equalizeWidths() and explicitly align x-centres,
+  # e.g. with `align(axis = "x", reference = "analysis", subelement = "arms")`
+  # (equivalent to `alignHorizontal(reference = "analysis", subelement = "arms")`).
+  equalizeWidths(subelement = list("arms", "analysis")) |>
+  # Arms and analysis in the inner span; lost boxes spread across full width
+  # so that lost_cast lands left of cast and lost_surgical right of surgical
+  spread(axis = "x", subelement = "arms",     from = left_from, to = left_to) |>
+  spread(axis = "x", subelement = "analysis", from = left_from, to = left_to) |>
+  spread(axis = "x", subelement = "lost",     from = 0,         to = 1) |>
+  # Exclusion box: auto-positioned between assessed and randomised, then moved right
+  insert(list(excluded = boxGrob(
+    "Excluded (n = 714)\n  477 Stable ankle mortise\n   64 Incongruent ankle mortise\n   30 Previous serious trauma\n  143 Other reasons",
+    just = "left", box_gp = excl_fill
+  )), after = "assessed") |>
+  move(subelement = "excluded", x = 0.85) |>
+  # Main-flow connectors
+  connect("assessed",   "randomised", type = "v", lty_gp = con_gp,  arrow_size = 3, smooth = TRUE) |>
+  connect("randomised", "arms",       type = "N", lty_gp = con_gp,  arrow_size = 3, smooth = TRUE) |>
+  connect("arms",       "analysis",   type = "v", lty_gp = con_gp,  arrow_size = 3) |>
+  # type = "L": exits assessed's *bottom* then turns right — the "down then right" branch
+  connect("assessed", "excluded", type = "L", lty_gp = side_gp, arrow_size = 3, smooth = TRUE) |>
+  # Pairwise arm -> lost: sharp corners (smooth = FALSE) avoid a colour-transition
+  # artefact where the orange arc would diverge from the shared blue vertical path
+  # a few mm above the junction, making the line appear doubled.
+  connect("arms", "lost", type = "L", lty_gp = side_gp, arrow_size = 3, smooth = TRUE)
+
+options(old_opts)
+
+## ----flowchart-group-width-and-padding, fig.height = 5.5, fig.width = 8-------
+old_opts <- options(boxGrobTxtPadding = unit(2, "mm"))
+
+flowchart(
+  rando = glue("Randomised\nN = 100"),
+  groups = list(
+    glue("Group 1\nn = 50"),
+    glue("Group 2\nn = 50")
+  ),
+  groups2 = list(
+    glue("Analysed\nn = 49"),
+    glue("Analysed\nn = 48")
+  )
+) |>
+  spread(axis = "y", margin = unit(0.02, "npc")) |>
+  spread(subelement = "groups", axis = "x", margin = unit(.05, "npc")) |>
+  spread(subelement = "groups2", axis = "x", margin = unit(.05, "npc")) |>
+  equalizeWidths(subelement = list("groups", "groups2")) |>
+  connect("rando", "groups", type = "N") |>
+  connect("groups", "groups2", type = "vertical")
+
+options(old_opts)
 
 ## ----basic_box, fig.height = 1.5, fig.width = 3, message = FALSE--------------
 grid.newpage()
@@ -461,7 +573,7 @@ txtOut("Between boxes", coords(row5[[1]])$top)
 
 span <- alignVertical(reference = row5_y, from  = from, to = to, position = "top")
 span
-spreadHorizontal(row5, .from = span$from, .to = span$to)
+spreadHorizontal(row5, from = span$from, to = span$to)
 
 # Row 6: Reverse box order + center distribution
 row6_y <- unit(.10, "npc")
@@ -665,20 +777,20 @@ for (arm_name in names(boxes$arms)) {
 }
 
 ## ----s3_api_example, fig.height=8, fig.width=6, eval=FALSE--------------------
-#  grid.newpage()
-#  
-#  # Define the nodes
-#  b1 <- boxGrob("Start", y = 0.8)
-#  b2 <- boxGrob("Process", y = 0.5)
-#  b3 <- boxGrob("End", y = 0.2)
-#  
-#  # Pipeline: list -> align -> connect -> print
-#  list(start = b1, process = b2, end = b3) |>
-#    align(axis = "y") |>
-#    spread(axis = "x") |>
-#    connect("start", "process", type = "horizontal") |>
-#    connect("process", "end", type = "horizontal") |>
-#    print()
+# grid.newpage()
+# 
+# # Define the nodes
+# b1 <- boxGrob("Start", y = 0.8)
+# b2 <- boxGrob("Process", y = 0.5)
+# b3 <- boxGrob("End", y = 0.2)
+# 
+# # Pipeline: list -> align -> connect -> print
+# list(start = b1, process = b2, end = b3) |>
+#   align(axis = "y") |>
+#   spread(axis = "x") |>
+#   connect("start", "process", type = "horizontal") |>
+#   connect("process", "end", type = "horizontal") |>
+#   print()
 
 ## ----math_expressions, fig.width=6, fig.height=3------------------------------
 grid.newpage()

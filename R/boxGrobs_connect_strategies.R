@@ -31,7 +31,8 @@ prGetConnectorStrategy <- function(start, end, type) {
         "Z" = "Z",
         "N" = "N",
         "fan_in_top" = "FanInTop",
-        "fan_in_center" = "FanInCenter"
+        "fan_in_center" = "FanInCenter",
+        "side" = "Side"
     )
 
     type_name <- type_map[type]
@@ -61,6 +62,7 @@ prCalculateConnector <- function(strategy, ...) {
 
 #' Default fallback for connector strategies
 #' @noRd
+#' @export
 prCalculateConnector.ConnectorStrategy <- function(strategy, ...) {
     # If no specific strategy for the type+config combination exists,
     # we fall back to the config-level default handlers.
@@ -72,7 +74,9 @@ prCalculateConnector.ConnectorStrategy <- function(strategy, ...) {
             type = strategy$type,
             subelmnt = args$subelmnt,
             lty_gp = args$lty_gp,
-            arrow_obj = args$arrow_obj
+            arrow_obj = args$arrow_obj,
+            smooth = args$smooth,
+            corner_radius = args$corner_radius
         ))
     }
 
@@ -83,7 +87,9 @@ prCalculateConnector.ConnectorStrategy <- function(strategy, ...) {
             type = strategy$type,
             subelmnt = args$subelmnt,
             lty_gp = args$lty_gp,
-            arrow_obj = args$arrow_obj
+            arrow_obj = args$arrow_obj,
+            smooth = args$smooth,
+            corner_radius = args$corner_radius
         ))
     }
 
@@ -95,6 +101,9 @@ prCalculateConnector.ConnectorStrategy <- function(strategy, ...) {
         subelmnt = args$subelmnt,
         lty_gp = args$lty_gp,
         arrow_obj = args$arrow_obj,
+        smooth = args$smooth,
+        corner_radius = args$corner_radius,
+        side = args$side,
         label = args$label,
         label_gp = args$label_gp,
         label_bg_gp = args$label_bg_gp,
@@ -106,6 +115,7 @@ prCalculateConnector.ConnectorStrategy <- function(strategy, ...) {
 
 #' Specific strategy for Many-to-One Fan-in Center
 #' @noRd
+#' @export
 prCalculateConnector.ManyToOneFanInCenterConnectorStrategy <- function(strategy, ...) {
     args <- list(...)
     prConnectManyToOneFanCenter(
@@ -121,6 +131,7 @@ prCalculateConnector.ManyToOneFanInCenterConnectorStrategy <- function(strategy,
 
 #' Specific strategy for Many-to-One Fan-in Top
 #' @noRd
+#' @export
 prCalculateConnector.ManyToOneFanInTopConnectorStrategy <- function(strategy, ...) {
     args <- list(...)
     prConnectManyToOneFanTop(
@@ -136,6 +147,7 @@ prCalculateConnector.ManyToOneFanInTopConnectorStrategy <- function(strategy, ..
 
 #' Specific strategy for Many-to-One N
 #' @noRd
+#' @export
 prCalculateConnector.ManyToOneNConnectorStrategy <- function(strategy, ...) {
     args <- list(...)
     prConnectManyToOneN(
@@ -145,12 +157,15 @@ prCalculateConnector.ManyToOneNConnectorStrategy <- function(strategy, ...) {
         subelmnt = args$subelmnt,
         lty_gp = args$lty_gp,
         arrow_obj = args$arrow_obj,
-        split_pad = args$split_pad
+        split_pad = args$split_pad,
+        smooth = args$smooth,
+        corner_radius = args$corner_radius
     )
 }
 
 #' Specific strategy for One-to-Many N
 #' @noRd
+#' @export
 prCalculateConnector.OneToManyNConnectorStrategy <- function(strategy, ...) {
     args <- list(...)
     prConnectOneToManyN(
@@ -160,6 +175,8 @@ prCalculateConnector.OneToManyNConnectorStrategy <- function(strategy, ...) {
         subelmnt = args$subelmnt,
         lty_gp = args$lty_gp,
         arrow_obj = args$arrow_obj,
-        split_pad = args$split_pad
+        split_pad = args$split_pad,
+        smooth = args$smooth,
+        corner_radius = args$corner_radius
     )
 }
