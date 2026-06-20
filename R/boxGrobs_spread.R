@@ -20,11 +20,26 @@
 #' @param type If `between`, the space *between* boxes is identical. If `center`,
 #'   the centers of the boxes are equally distributed across the span.
 #' @param subelement If a `list` of boxes is provided, this parameter can be used
-#'   to target a specific element (by name or index), or a deep path into nested
-#'   lists (e.g., `c("detail", 1)`), for the spreading operation. You can also
-#'   provide multiple targets by giving a list of paths (e.g., `list(c("detail", 1), c("followup", 1))`).
+#'   to target a specific element (by name or index), a deep path into nested
+#'   lists (e.g., `c("detail", 1)`), or a regex selector created with
+#'   [stringr::regex()] that is matched against top-level names
+#'   (e.g. `stringr::regex("^groups")`). You can also provide multiple targets
+#'   as a list of paths or selectors (e.g.,
+#'   `list(c("detail", 1), stringr::regex("^followup"))`).
+#'   Bare character strings are always treated as literal paths.
 #'   The function will return the original list with the targeted element(s)
 #'   replaced by their spread version(s).
+#' @param exclude Optional selector for elements to leave out of the spread.
+#'   Uses the same selector syntax as `subelement`, but each excluded path must
+#'   resolve to an element directly inside the list currently being spread. This
+#'   is useful for side branches that should be positioned separately, such as
+#'   lost-to-follow-up boxes centered between the rows before and after them.
+#'
+#' @details
+#' `spreadVertical()`/`spreadHorizontal()` return updated box objects. They do
+#' not mutate box objects that are already bound to variables. To use the new
+#' coordinates in subsequent operations (for example `connectGrob()`), assign
+#' the result and use those returned boxes.
 #'
 #' @return A `list` with the boxes that have been spread.
 #'
@@ -42,7 +57,8 @@ spreadVertical <- function(
   to = NULL,
   margin = unit(0, "npc"),
   type = c("between", "center"),
-  subelement = NULL
+  subelement = NULL,
+  exclude = NULL
 ) {
   type <- match.arg(type)
 
@@ -58,7 +74,7 @@ spreadVertical <- function(
   }
 
   if (!is.null(subelement)) {
-    paths <- if (is.list(subelement) && all(sapply(subelement, is.atomic))) subelement else list(subelement)
+    paths <- prResolveSubelementSelector(subelement, boxes2spread)
 
     # Resolve from/to if they are given as paths into the top-level list
     resolve_endpoint <- function(endpoint) {
@@ -75,8 +91,8 @@ spreadVertical <- function(
       endpoint
     }
 
-    resolved_from <- resolve_endpoint(from)
-    resolved_to <- resolve_endpoint(to)
+    resolved_from <- prResolvePositionValue(resolve_endpoint(from), boxes2spread)
+    resolved_to <- prResolvePositionValue(resolve_endpoint(to), boxes2spread)
 
     for (path in paths) {
       target <- get_list_element_by_path(boxes2spread, path)
@@ -98,7 +114,8 @@ spreadVertical <- function(
         from = resolved_from,
         to = resolved_to,
         margin = margin,
-        type = type
+        type = type,
+        exclude = exclude
       )
 
       if (container_is_first) {
@@ -116,6 +133,11 @@ spreadVertical <- function(
     prAssertBoxOrListOfBoxes(box)
   }
 
+  excluded <- prExtractSpreadExclusions(boxes2spread, exclude)
+  if (!is.null(excluded)) {
+    boxes2spread <- excluded$included
+  }
+
   span_info <- prGetSpanSpace(
     boxes2spread = boxes2spread,
     from = from,
@@ -131,19 +153,22 @@ spreadVertical <- function(
     orientation = "vertical"
   )
 
-  prApplyBoxSpread(
+  spread_boxes <- prApplyBoxSpread(
     boxes2spread = boxes2spread,
     distances = new_y_distances,
     move_fn = function(box, pos) {
       moveBox(box, y = pos, space = "absolute", just = c(NA, "center"))
     }
   )
+
+  prRestoreSpreadExclusions(spread_boxes, excluded)
 }
 
 #' @rdname spread
 #' @export
 spreadHorizontal <- function(..., from = NULL, to = NULL, margin = unit(0, "npc"),
-                             type = c("between", "center"), subelement = NULL) {
+                             type = c("between", "center"), subelement = NULL,
+                             exclude = NULL) {
   type <- match.arg(type)
 
   boxes2spread <- list(...)
@@ -158,7 +183,7 @@ spreadHorizontal <- function(..., from = NULL, to = NULL, margin = unit(0, "npc"
   }
 
   if (!is.null(subelement)) {
-    paths <- if (is.list(subelement) && all(sapply(subelement, is.atomic))) subelement else list(subelement)
+    paths <- prResolveSubelementSelector(subelement, boxes2spread)
 
     resolve_endpoint <- function(endpoint) {
       # Only attempt path resolution for character-like paths (e.g. c("detail", 1))
@@ -175,8 +200,8 @@ spreadHorizontal <- function(..., from = NULL, to = NULL, margin = unit(0, "npc"
       endpoint
     }
 
-    resolved_from <- resolve_endpoint(from)
-    resolved_to <- resolve_endpoint(to)
+    resolved_from <- prResolvePositionValue(resolve_endpoint(from), boxes2spread)
+    resolved_to <- prResolvePositionValue(resolve_endpoint(to), boxes2spread)
 
     for (path in paths) {
       target <- get_list_element_by_path(boxes2spread, path)
@@ -198,7 +223,8 @@ spreadHorizontal <- function(..., from = NULL, to = NULL, margin = unit(0, "npc"
         from = resolved_from,
         to = resolved_to,
         margin = margin,
-        type = type
+        type = type,
+        exclude = exclude
       )
 
       if (container_is_first) {
@@ -216,6 +242,11 @@ spreadHorizontal <- function(..., from = NULL, to = NULL, margin = unit(0, "npc"
     prAssertBoxOrListOfBoxes(box)
   }
 
+  excluded <- prExtractSpreadExclusions(boxes2spread, exclude)
+  if (!is.null(excluded)) {
+    boxes2spread <- excluded$included
+  }
+
   span_info <- prGetSpanSpace(
     boxes2spread = boxes2spread,
     from = from,
@@ -231,13 +262,74 @@ spreadHorizontal <- function(..., from = NULL, to = NULL, margin = unit(0, "npc"
     orientation = "horizontal"
   )
 
-  prApplyBoxSpread(
+  spread_boxes <- prApplyBoxSpread(
     boxes2spread = boxes2spread,
     distances = new_x_distances,
     move_fn = function(box, pos) {
       moveBox(box, x = pos, space = "absolute", just = "center")
     }
   )
+
+  prRestoreSpreadExclusions(spread_boxes, excluded)
+}
+
+prExtractSpreadExclusions <- function(boxes2spread, exclude) {
+  if (is.null(exclude)) {
+    return(NULL)
+  }
+
+  paths <- prResolveSubelementSelector(exclude, boxes2spread)
+  if (length(paths) == 0) {
+    return(NULL)
+  }
+
+  normalize_index <- function(path) {
+    if (length(path) != 1) {
+      stop(
+        "`exclude` paths must refer to elements directly inside the list being spread.",
+        call. = FALSE
+      )
+    }
+
+    idx <- path[[1]]
+    if (is.character(idx)) {
+      nms <- names(boxes2spread)
+      if (is.null(nms) || !idx %in% nms) {
+        stop("The exclude element '", idx, "' was not found in the provided boxes.", call. = FALSE)
+      }
+      return(match(idx, nms))
+    }
+
+    idx <- as.integer(idx)
+    if (is.na(idx) || idx < 1 || idx > length(boxes2spread)) {
+      stop("The exclude element '", paste(path, collapse = " -> "), "' was not found in the provided boxes.", call. = FALSE)
+    }
+    idx
+  }
+
+  exclude_idx <- unique(vapply(paths, normalize_index, integer(1)))
+  if (length(exclude_idx) >= length(boxes2spread)) {
+    stop("`exclude` cannot remove every element from the spread.", call. = FALSE)
+  }
+
+  list(
+    original = boxes2spread,
+    included = boxes2spread[-exclude_idx],
+    included_idx = setdiff(seq_along(boxes2spread), exclude_idx)
+  )
+}
+
+prRestoreSpreadExclusions <- function(spread_boxes, excluded) {
+  if (is.null(excluded)) {
+    return(spread_boxes)
+  }
+
+  ret <- excluded$original
+  for (i in seq_along(excluded$included_idx)) {
+    ret[[excluded$included_idx[[i]]]] <- spread_boxes[[i]]
+  }
+
+  prExtendClass(ret, "Gmisc_list_of_boxes")
 }
 
 prGetSpanSpace <- function(

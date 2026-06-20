@@ -23,7 +23,8 @@ spreadVertical(
   to = NULL,
   margin = unit(0, "npc"),
   type = c("between", "center"),
-  subelement = NULL
+  subelement = NULL,
+  exclude = NULL
 )
 
 spreadHorizontal(
@@ -32,7 +33,8 @@ spreadHorizontal(
   to = NULL,
   margin = unit(0, "npc"),
   type = c("between", "center"),
-  subelement = NULL
+  subelement = NULL,
+  exclude = NULL
 )
 }
 \arguments{
@@ -58,11 +60,21 @@ span comes from \code{from} / \code{to} or the viewport.}
 the centers of the boxes are equally distributed across the span.}
 
 \item{subelement}{If a \code{list} of boxes is provided, this parameter can be used
-to target a specific element (by name or index), or a deep path into nested
-lists (e.g., \code{c("detail", 1)}), for the spreading operation. You can also
-provide multiple targets by giving a list of paths (e.g., \code{list(c("detail", 1), c("followup", 1))}).
+to target a specific element (by name or index), a deep path into nested
+lists (e.g., \code{c("detail", 1)}), or a regex selector created with
+\code{\link[stringr:regex]{stringr::regex()}} that is matched against top-level names
+(e.g. \code{stringr::regex("^groups")}). You can also provide multiple targets
+as a list of paths or selectors (e.g.,
+\code{list(c("detail", 1), stringr::regex("^followup"))}).
+Bare character strings are always treated as literal paths.
 The function will return the original list with the targeted element(s)
 replaced by their spread version(s).}
+
+\item{exclude}{Optional selector for elements to leave out of the spread.
+Uses the same selector syntax as \code{subelement}, but each excluded path must
+resolve to an element directly inside the list currently being spread. This
+is useful for side branches that should be positioned separately, such as
+lost-to-follow-up boxes centered between the rows before and after them.}
 }
 \value{
 The list of boxes with updated positions (class `Gmisc_list_of_boxes`).
@@ -79,6 +91,11 @@ direction within a given span.
 The span can be defined explicitly using \code{from} / \code{to}, or implicitly by the
 current viewport. Numeric values are interpreted as proportions of the viewport
 (\code{npc} units).
+
+\code{spreadVertical()}/\code{spreadHorizontal()} return updated box objects. They do
+not mutate box objects that are already bound to variables. To use the new
+coordinates in subsequent operations (for example \code{connectGrob()}), assign
+the result and use those returned boxes.
 }
 \examples{
 library(grid)
@@ -90,13 +107,14 @@ end <- boxGrob("Bottom", x = .5, y = .2)
 side <- boxPropGrob("Side", "Left", "Right", prop = .3, x = .2, y = .8)
 exclude <- boxGrob("Exclude:\n - Too sick\n - Prev. surgery", x = .8, y = .5, just = "left")
 
-# We can chain the spread operations and print the result
-spreadVertical(
+# We can chain the spread operations from a flowchart object
+flowchart(
   start = start,
   middle = list(side, exclude),
   end = end
 ) |>
-  spreadHorizontal(subelement = "middle", from = 0.2, to = 0.8)
+  spread(axis = "y") |>
+  spread(axis = "x", subelement = "middle", from = 0.2, to = 0.8)
 
 # Use device-level paging in interactive sessions so users can inspect the first plot
 # This will prompt before creating the next page; we restore the previous setting afterwards
@@ -110,8 +128,11 @@ if (interactive()) {
 }
 
 # Example: spread a nested subelement by deep path and print sequentially
-list(grp = list(middle = list(side, exclude))) |>
-  spreadHorizontal(subelement = c("grp", "middle"), from = 0.2, to = 0.8)
+flowchart(
+  anchor = boxGrob("Anchor", x = .5, y = .15),
+  grp = list(middle = list(side, exclude))
+) |>
+  spread(axis = "x", subelement = c("grp", "middle"), from = 0.2, to = 0.8)
 }
 \seealso{
 Other flowchart components:
@@ -124,10 +145,13 @@ Other flowchart components:
 \code{\link[=connectGrob]{connectGrob()}},
 \code{\link[=coords]{coords()}},
 \code{\link[=distance]{distance()}},
+\code{\link[=equalizeHeights]{equalizeHeights()}},
 \code{\link[=equalizeWidths]{equalizeWidths()}},
 \code{\link[=flowchart]{flowchart()}},
 \code{\link[=insert]{insert()}},
 \code{\link[=move]{move()}},
-\code{\link[=moveBox]{moveBox()}}
+\code{\link[=moveBox]{moveBox()}},
+\code{\link[=phaseLabel]{phaseLabel()}},
+\code{\link[=position]{position()}}
 }
 \concept{flowchart components}

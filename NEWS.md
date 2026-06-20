@@ -1,5 +1,31 @@
 NEWS for the Gmisc package
 
+## Changes for 3.4.0
+
+- Added `vertical_axis` and `horizontal_axis` connector types for flowcharts. These opt-in connectors preserve the source box's x- or y-axis and project it onto the target boundary, giving true 90-degree vertical/horizontal arrows for shared wide or tall target boxes. Existing `vertical` and `horizontal` connector behavior is unchanged.
+- Added `phaseLabel()` for flowchart box lists: a one-call-per-stage helper that adds a CONSORT-style phase label (e.g. *Allocation*, *Follow-up*, *Analysis*) centred between a stage's arms, sitting slightly above it and drawn on top. The label width adapts to the stage — spanning the central gap (plus a small corner overlap) for two arms, or the full stage width as a banner for three or more arms — and can be set explicitly via `width`. It correctly handles nested arm lists (arms that are themselves lists of boxes) by resolving their merged bounding box.
+- Added `on_top` to `insert()` for flowchart box lists. A box inserted with `insert(..., on_top = TRUE)` is drawn on top of the other boxes and connections, regardless of its position in the list, and the marker is preserved through subsequent `move()`/`align()` operations. This is the lower-level overlay mechanism that `phaseLabel()` builds on.
+- `insert()` now resolves grouped (list) neighbours via their merged bounding box, so a box can be inserted between grouped stages without error.
+- Added a CONSORT phase-label example to the grid-based flowchart vignette showing `phaseLabel()` centred between randomisation arms.
+- Updated flowchart examples to emphasize the `flowchart()` + pipe (`|>`) style API in `inst/examples/connectGrob_example.R`, `inst/examples/spreadBox_ex.R`, and `inst/examples/alignBox_ex.R`.
+- Clarified spread/connect documentation to state that spread/align return updated objects (no in-place mutation) and that connectors should use the returned boxes.
+- Improved interactive example ergonomics by pausing between graph pages in multi-plot examples.
+- Added `box_fn_args` parameter to `boxGrob()` for passing extra arguments directly to the box drawing function. The default is now `list(r = unit(5, "pt"))`, giving every box a fixed 5 pt corner radius (approximately equivalent to the widely-used 5 px CSS `border-radius`) regardless of box size — solving the issue where larger boxes had visibly rounder corners than smaller ones. Override per box or globally via `options(boxGrobFnArgs = list(...))`.
+- Added `equalizeHeights()` for flowchart box lists, mirroring the existing `equalizeWidths()`. It sets selected boxes to a shared height (defaulting to the tallest among the selection) and supports the same `subelement` path syntax as `equalizeWidths()`.
+- Added `exclude` to `spreadVertical()`/`spreadHorizontal()` and the S3 `spread()` wrapper, allowing side branches to be left out of the main spread while preserving them in the flowchart list for later `align()`, `move()`, and `connect()` calls.
+- Improved `spread()` span handling: explicit `from`/`to` spans now work naturally with `margin` as an inset inside that span (for example `spread(axis = "x", from = 0, to = 0.7, margin = 0.05)` spreads within the left 70% of the viewport with padding), and subelement spreads can use deferred `position()` endpoints such as `from = position("log", "top", "y")`.
+- Added `references` to `alignVertical()`/`alignHorizontal()` and the S3 `align()` wrapper. Supplying two references aligns the target to their midpoint on the selected axis, useful for centering side boxes between the main boxes before and after them.
+- Clarified and tested `moveBox()`/`move()` justification semantics: for absolute moves, `just = "right"` makes `x` the right border, `just = "left"` makes `x` the left border, and the same edge-based interpretation applies vertically for top/bottom.
+- Added one-to-many grouped side fan-out support to the S3 `connect()` API for `connect("source", "group", type = "side")`. The shared fan-out bus now honors `side_route = "outside"` and `side_offset` before branching to the destination boxes, which keeps side-branch arrows away from the source box edge.
+- Added many-to-one grouped side fan-in to the S3 `connect()` API for `connect(list("a", "b"), "target", type = "side")`. The shared return bus now honors `side`/`end_side` and `side_route`/`side_offset`, routing to the requested outer side instead of letting each line independently pick the closest side of the target.
+- Fixed one-to-one `connect(..., type = "side")` connectors so they honor `side_route`/`side_offset`. The vertical segment now steps out from the source box edge by the offset (matching the grouped fan-in/fan-out behavior); previously the offset was ignored and the line hugged the box edge. Use `side_route = "edge"` to keep the old edge-hugging route.
+- Extended connector labels to grouped side fan-out connectors. `label` can now be used directly on a grouped `type = "side"` fan-out; the label is centered on the offset bus, drawn on the outgoing line, and uses a semi-transparent white background by default so the line remains visually legible.
+- Added and expanded alternate flowchart shape examples using `boxEllipseGrob()`, `boxDatabaseGrob()`, `boxDocumentGrob()`, `boxDocumentsGrob()`, `boxDiamondGrob()`, and `boxTapeGrob()` together with `spread()`/`align()` positioning.
+- Improved alternate shape helpers so non-rectangular shapes add appropriate text padding and expose visible bounds for connector anchoring. This keeps labels inside ellipse/database/document/tape shapes and lets connectors hit the visible shape edge instead of the surrounding viewport, and `fan_in_top` trunks now terminate exactly on the target's top edge.
+- Added `position()` with relative moves.
+- Added dotted arrows lines for flowcharts
+- Added regex selector for box lists
+
 ## Changes for 3.3.0
 
 - Added `equalizeWidths()` for flowchart box lists, allowing selected boxes (including nested `subelement` paths and list-of-boxes targets) to share a common width while preserving center positions.

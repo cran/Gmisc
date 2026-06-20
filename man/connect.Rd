@@ -15,8 +15,8 @@
 connectGrob(
   start,
   end,
-  type = c("vertical", "horizontal", "L", "-", "Z", "N", "fan_in_top", "fan_in_center",
-    "side"),
+  type = c("vertical", "vertical_axis", "horizontal", "horizontal_axis", "L", "-", "Z",
+    "N", "fan_in_top", "fan_in_center", "side"),
   subelmnt = c("right", "left"),
   lty_gp = getOption("connectGrob", default = gpar(fill = "black")),
   arrow_obj = getOption("connectGrobArrow", default = arrow(ends = "last", type =
@@ -27,9 +27,12 @@ connectGrob(
   smooth = FALSE,
   corner_radius = unit(3, "mm"),
   side = c("auto", "left", "right"),
+  end_side = c("auto", "left", "right"),
+  side_route = c("outside", "edge"),
+  side_offset = unit(5, "mm"),
   label = NULL,
   label_gp = grid::gpar(cex = 0.9),
-  label_bg_gp = grid::gpar(fill = "white", col = NA),
+  label_bg_gp = grid::gpar(fill = "white", col = NA, alpha = 0.85),
   label_pad = unit(1.5, "mm"),
   label_pos = c("mid", "near_start", "near_end"),
   label_offset = unit(2, "mm")
@@ -85,8 +88,19 @@ A \code{\link[grid:unit]{grid::unit()}} or numeric (interpreted as millimeters).
 \item{side}{For \code{type = "side"}, which side of the start box to exit from.
 \code{"auto"} (default) picks the side that faces the end box.}
 
-\item{label}{Optional text label for one-to-one connectors (e.g. \code{"yes"} / \code{"no"}).
-Only supported when both \code{start} and \code{end} are single boxes.}
+\item{end_side}{For \code{type = "side"}, which side of the end box to enter.
+\code{"auto"} (default) picks the side that faces the start box.}
+
+\item{side_route}{For grouped \code{connect(..., type = "side")} calls in
+the S3 flowchart API, where to draw the shared vertical return path.
+\code{"outside"} offsets it away from the source boxes; \code{"edge"} draws it on
+the source box edge.}
+
+\item{side_offset}{Offset used when \code{side_route = "outside"}.
+Numeric values are interpreted as millimeters.}
+
+\item{label}{Optional text label for one-to-one connectors and grouped
+\code{type = "side"} fan-out connectors (e.g. \code{"yes"} / \code{"no"}).}
 
 \item{label_gp}{A \code{\link[grid:gpar]{grid::gpar()}} controlling label appearance.}
 
@@ -107,9 +121,11 @@ as millimeters.}
 \item{recording}{Passed to [grid::grid.draw()] when rendering each element in
 the list. Defaults to `TRUE` (record drawing for later replay).}
 
-\item{from}{The name (string) or index of the start box in `x`. Multiple values allowed.}
+\item{from}{The name (string), index, list of selectors, or `stringr::regex()`
+selector for the start box in `x`. Multiple values allowed.}
 
-\item{to}{The name (string) or index of the end box in `x`. Multiple values allowed.}
+\item{to}{The name (string), index, list of selectors, or `stringr::regex()`
+selector for the end box in `x`. Multiple values allowed.}
 }
 \value{
 \itemize{
@@ -147,8 +163,16 @@ custom connectors using the calculated coordinates.
 
 \code{type} controls the connector shape:
 \itemize{
-\item \code{"vertical"}: straight vertical connector
-\item \code{"horizontal"}: straight horizontal connector
+\item \code{"vertical"}: straight connector between vertical faces (top/bottom).
+If the box centers differ on the x-axis, the line is diagonal.
+\item \code{"vertical_axis"}: strict vertical connector preserving the source box
+center x-coordinate and projecting that 90-degree axis onto the target
+boundary. Source and target must be vertically separated.
+\item \code{"horizontal"}: straight connector between horizontal faces (left/right).
+If the box centers differ on the y-axis, the line is diagonal.
+\item \code{"horizontal_axis"}: strict horizontal connector preserving the source box
+center y-coordinate and projecting that 90-degree axis onto the target
+boundary. Source and target must be horizontally separated.
 \item \code{"L"}: vertical then horizontal (direction chosen automatically)
 \item \code{"-"}: straight horizontal connector at the end box y-position
 \item \code{"Z"}: horizontal connector with two 90-degree turns
@@ -166,15 +190,24 @@ arrow to represent the merged flow (e.g. a middle trunk bus).
 For \code{type = "N"} and \code{type = "fan_in_top"} with multi-box connections, a shared
 bend position is computed so that the horizontal segment aligns visually across
 all connectors.
+
+Use \code{"vertical_axis"} or \code{"horizontal_axis"} when the visual requirement is a
+true axis-aligned connector. Use \code{"vertical"} or \code{"horizontal"} when you want
+the shortest straight connector between the corresponding box faces and a
+diagonal line is acceptable.
 }
 
 \subsection{Labels}{
 
-For one-to-one connectors you can add a text label (for example \code{"yes"} / \code{"no"}).
-The label is placed near the midpoint of the connector.
-The label is drawn with a white background for readability.
-Use \code{label_pad} to control padding around the text and \code{label_offset} to move
-the label away from the connector.
+For one-to-one connectors and grouped side fan-out connectors you can add a
+text label (for example \code{"yes"} / \code{"no"}). For one-to-one connectors the
+label is placed near the midpoint of the connector; for grouped side fan-out
+connectors it is centered at the offset fan-out bus and drawn on the
+outgoing line.
+
+The label is drawn with a semi-transparent white background for readability.
+Use \code{label_pad} to control padding around the text and \code{label_offset} to nudge
+the label away from the connector when needed.
 }
 
 \subsection{Split boxes}{
@@ -182,23 +215,46 @@ the label away from the connector.
 When connecting to or from a \code{boxPropGrob}, \code{subelmnt} controls whether the left
 or right sub-box x-coordinate is used as the anchor point.
 }
+
+\subsection{Using with spread/align}{
+
+\code{connectGrob()} always uses coordinates from the \code{start} and \code{end} objects
+you pass in. If those objects were positioned with \verb{spread*()}/\verb{align*()},
+pass the returned objects (for example by assigning the spread/align result)
+rather than the original pre-spread variables.
+}
 }
 \examples{
 library(grid)
+
+# In interactive sessions, pause between pages produced by this example.
+if (interactive()) {
+  old_ask <- grDevices::devAskNewPage(TRUE)
+  on.exit(grDevices::devAskNewPage(old_ask), add = TRUE)
+}
+
 grid.newpage()
 
-# Initiate the boxes that we want to connect
-boxes <- list(
+# Build a flowchart object
+boxes <- flowchart(
   start = boxGrob("Top", x = .5, y = .8),
   end = boxGrob("Bottom", x = .5, y = .2),
   side = boxPropGrob("Side", "Left", "Right", prop = .3, x = .2, y = .8),
   exclude = boxGrob("Exclude:\n - Too sick\n - Prev. surgery", x = .8, y = .5, just = "left")
 )
 
-# Connect the boxes and print/plot them
-connectGrob(boxes$start, boxes$end, "vertical")
-connectGrob(boxes$start, boxes$side, "horizontal")
-connectGrob(boxes$start, boxes$exclude, "L")
+# Connect using the pipe-friendly S3 API
+# Note: type = "vertical" connects top/bottom faces with a straight segment;
+# if x positions differ, the segment may be diagonal.
+boxes <- boxes |>
+  connect(from = "start", to = "end", type = "vertical") |>
+  connect(from = "start", to = "side", type = "horizontal") |>
+  connect(from = "start", to = "exclude", type = "L")
+
+print(boxes)
+
+# Start a fresh page for split-box connector examples.
+grid.newpage()
 
 # We can also connect to/from lists
 side_boxes <- list(
@@ -209,17 +265,73 @@ side_boxes <- list(
 connectGrob(boxes$side, side_boxes$left, "v", "l")
 connectGrob(boxes$side, side_boxes$right, "v", "r")
 
+# Start a fresh page for fan-in example.
+grid.newpage()
+
 # Fan-in center example: multiple starts into one center bus and single trunk
-list(
-  boxes$start,
-  boxGrob("S2", x = .3, y = .7),
-  boxGrob("S3", x = .7, y = .7)
+flowchart(
+  start = boxes$start,
+  S2 = boxGrob("S2", x = .3, y = .7),
+  S3 = boxGrob("S3", x = .7, y = .7),
+  end = boxes$end
 ) |>
-  connectGrob(boxes$end, type = "fan_in_center")
+  connect(from = c("start", "S2", "S3"), to = "end", type = "fan_in_center") |>
+  print()
+
+# Start a fresh page for axis-preserving connector examples.
+grid.newpage()
+
+# vertical_axis is the axis-preserving alternative: it preserves each source's
+# x-position when landing on the boundary of a wide shared target.
+flowchart(
+  A = boxGrob("A", x = .25, y = .75),
+  B = boxGrob("B", x = .50, y = .75),
+  C = boxGrob("C", x = .75, y = .75),
+  target = boxGrob("Shared target", x = .5, y = .2, width = unit(.75, "npc"))
+) |>
+  connect(from = c("A", "B", "C"), to = "target", type = "vertical_axis") |>
+  print()
+
+grid.newpage()
+
+# horizontal_axis is the axis-preserving alternative: it preserves each
+# source's y-position when landing on the boundary of a tall shared target.
+flowchart(
+  A = boxGrob("A", x = .20, y = .25),
+  B = boxGrob("B", x = .20, y = .50),
+  C = boxGrob("C", x = .20, y = .75),
+  target = boxGrob("Shared\ntarget", x = .8, y = .5, height = unit(.75, "npc"))
+) |>
+  connect(from = c("A", "B", "C"), to = "target", type = "horizontal_axis") |>
+  print()
+
+# Start a fresh page for spread/assignment example.
+grid.newpage()
+
+# When using spread/align, use the returned objects for connectors
+visits <- flowchart(
+  visit1 = boxGrob("Visit 1", x = .1, y = .35),
+  visit2 = boxGrob("Visit 2", x = .2, y = .35),
+  visit3 = boxGrob("Visit 3", x = .8, y = .35)
+)
+
+# Incorrect pattern (no assignment): spread result is discarded
+visits |>
+  spread(axis = "x", from = .05, to = .95, type = "between")
+
+# This connector uses original coordinates because 'visits' was unchanged
+connectGrob(visits$visit1, visits$visit2, type = "horizontal")
+
+# Correct pattern: assign returned boxes and connect those
+visits_spread <- visits |>
+  spread(axis = "x", from = .05, to = .95, type = "between")
+connectGrob(visits_spread$visit1, visits_spread$visit2, type = "horizontal")
 
 # Print the boxes
 boxes
 side_boxes
+visits
+visits_spread
 }
 \seealso{
 [`connectGrob`]
@@ -233,11 +345,14 @@ Other flowchart components:
 \code{\link{boxShapes}},
 \code{\link[=coords]{coords()}},
 \code{\link[=distance]{distance()}},
+\code{\link[=equalizeHeights]{equalizeHeights()}},
 \code{\link[=equalizeWidths]{equalizeWidths()}},
 \code{\link[=flowchart]{flowchart()}},
 \code{\link[=insert]{insert()}},
 \code{\link[=move]{move()}},
 \code{\link[=moveBox]{moveBox()}},
+\code{\link[=phaseLabel]{phaseLabel()}},
+\code{\link[=position]{position()}},
 \code{\link[=spread]{spread()}}
 }
 \concept{flowchart components}

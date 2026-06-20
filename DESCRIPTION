@@ -1,5 +1,5 @@
 Package: Gmisc
-Version: 3.3.0
+Version: 3.4.0
 Title: Descriptive Statistics, Transition Plots, and More
 Authors@R: c(
     person(given = "Max", family = "Gordon",
@@ -19,13 +19,13 @@ Imports: Rcpp (>= 0.11.4), abind, checkmate, forestplot, Hmisc, glue,
         grid, grDevices, graphics, knitr, lattice, lubridate, magrittr,
         methods, rlang, rmarkdown, stringr, stats, XML, yaml, utils
 Suggests: bench, vdiffr, datasets, dplyr, jsonlite, testthat,
-        tidyselect
+        tidyselect, webshot2
 Encoding: UTF-8
 NeedsCompilation: yes
 LinkingTo: Rcpp
 VignetteBuilder: knitr
 Config/roxygen2/version: 8.0.0
-Packaged: 2026-05-30 11:25:23 UTC; max
+Packaged: 2026-06-20 10:49:57 UTC; max
 Author: Max Gordon [aut, cre] (ORCID: <https://orcid.org/0000-0002-8080-5815>)
 Repository: CRAN
-Date/Publication: 2026-06-02 05:10:02 UTC
+Date/Publication: 2026-06-20 11:30:02 UTC

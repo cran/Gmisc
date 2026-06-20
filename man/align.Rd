@@ -10,18 +10,20 @@
 \title{Align boxes}
 \usage{
 alignVertical(
-  reference,
+  reference = NULL,
   ...,
   position = c("center", "top", "bottom"),
-  subelement = NULL
+  subelement = NULL,
+  references = NULL
 )
 
 alignHorizontal(
-  reference,
+  reference = NULL,
   ...,
   position = c("center", "left", "right"),
   sub_position = c("none", "left", "right"),
-  subelement = NULL
+  subelement = NULL,
+  references = NULL
 )
 
 align(x, ...)
@@ -43,14 +45,25 @@ provided and is \code{0} or greater than the number of boxes, it is treated as a
 see the accepted arguments}
 
 \item{subelement}{If a \code{list} of boxes is provided, this parameter can be used
-to target a specific element (by name or index), or a deep path into nested
-lists (e.g., \code{c("detail", 1)}), for the alignment operation. You can also
-provide multiple targets by giving a list of paths (e.g., \code{list(c("detail", 1), c("followup", 1))}).
+to target a specific element (by name or index), a deep path into nested
+lists (e.g., \code{c("detail", 1)}), or a regex selector created with
+\code{\link[stringr:regex]{stringr::regex()}} that is matched against top-level names
+(e.g. \code{stringr::regex("^groups")}). You can also provide multiple targets
+as a list of paths or selectors (e.g.,
+\code{list(c("detail", 1), stringr::regex("^followup"))}).
+Bare character strings are always treated as literal paths.
 When a list of boxes is \emph{piped} into \code{alignVertical()}/\code{alignHorizontal()} and a named \code{reference} is
 provided (e.g. \code{my_boxes |> alignHorizontal(reference = c("grp","sub"), .subelement = ...)}), the
 function will unwrap a single-element wrapper so nested \code{.subelement} targets are found as expected.
 The function will return the original list with the targeted element(s)
 replaced by their aligned version(s).}
+
+\item{references}{Optional pair of references. When supplied, the alignment
+reference is the midpoint between the two references on the selected axis.
+This is useful for centering side boxes, such as excluded patients, between
+the main boxes before and after them. Each reference can be anything
+accepted by \code{reference}, including a path such as \code{"assessed"} or
+\code{c("arms", 1)}.}
 
 \item{sub_position}{When the box is a \code{\link{boxPropGrob}} it not only has the general \code{.positions} but
 also \code{left} and \code{right} which can be viewed as separate boxes that have simply been merged.}
@@ -80,18 +93,18 @@ box <- boxGrob("A cool reference box",
 )
 
 # Create a group of boxes to align
-boxes <- list(
+boxes <- flowchart(
   another_box = boxGrob("A horizontal box", x = .1, y = .5),
   yet_another_box = boxGrob("Another horizontal box", x = .8, y = .3)
 )
 
-# Align the group and then individual boxes within that group
-# (do not pipe the list into the function, as the first argument is `reference`)
-aligned_boxes <- alignHorizontal(boxes, reference = box, position = "right") |>
-  alignVertical(reference = .5, position = "center")
+# Align the group in pipe style
+aligned_boxes <- boxes |>
+  align(axis = "x", reference = box, position = "right") |>
+  align(axis = "y", reference = .5, position = "center")
 
 # Example: align a nested element inside a complex list using a deep path
-complex_list <- list(
+complex_list <- flowchart(
   arms = list(
     early = list(boxGrob("Early", x = .2, y = .4)),
     late = list(boxGrob("Late", x = .8, y = .2))
@@ -104,16 +117,31 @@ complex_list <- list(
 
 # Align the first detail element to the early arm by deep path
 complex_list <- complex_list |>
-  alignHorizontal(
+  align(
+    axis = "x",
     reference = c("arms", "early"),
     position = "center",
     subelement = c("detail", 1)
+  )
+
+# Center a side branch between the boxes before and after it
+side_branch <- flowchart(
+  assessed = boxGrob("Assessed", y = .9),
+  randomised = boxGrob("Randomised", y = .5)
+) |>
+  insert(list(excluded = boxGrob("Excluded")), after = "assessed") |>
+  move(subelement = "excluded", x = .85) |>
+  align(
+    axis = "y",
+    subelement = "excluded",
+    references = list("assessed", "randomised")
   )
 
 # Print the reference and the aligned boxes
 box
 aligned_boxes
 complex_list
+side_branch
 }
 \seealso{
 Other flowchart components:
@@ -125,11 +153,14 @@ Other flowchart components:
 \code{\link[=connectGrob]{connectGrob()}},
 \code{\link[=coords]{coords()}},
 \code{\link[=distance]{distance()}},
+\code{\link[=equalizeHeights]{equalizeHeights()}},
 \code{\link[=equalizeWidths]{equalizeWidths()}},
 \code{\link[=flowchart]{flowchart()}},
 \code{\link[=insert]{insert()}},
 \code{\link[=move]{move()}},
 \code{\link[=moveBox]{moveBox()}},
+\code{\link[=phaseLabel]{phaseLabel()}},
+\code{\link[=position]{position()}},
 \code{\link[=spread]{spread()}}
 }
 \concept{flowchart components}

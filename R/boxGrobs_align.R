@@ -5,13 +5,23 @@
 #' @param reference A [`boxGrob`]/[`boxPropGrob`]/[`coords`] object or a [`unit`][grid::unit] or a
 #'  numerical value that can be converted into a [`unit`][grid::unit] of `npc` type. If a numeric scalar is
 #'  provided and is `0` or greater than the number of boxes, it is treated as a coordinate (no error is raised).
+#' @param references Optional pair of references. When supplied, the alignment
+#'   reference is the midpoint between the two references on the selected axis.
+#'   This is useful for centering side boxes, such as excluded patients, between
+#'   the main boxes before and after them. Each reference can be anything
+#'   accepted by `reference`, including a path such as `"assessed"` or
+#'   `c("arms", 1)`.
 #' @param ... A set of boxes.
 #' @param position How to align the boxes, differs slightly for vertical and horizontal alignment
 #'  see the accepted arguments
 #' @param subelement If a `list` of boxes is provided, this parameter can be used
-#'   to target a specific element (by name or index), or a deep path into nested
-#'   lists (e.g., `c("detail", 1)`), for the alignment operation. You can also
-#'   provide multiple targets by giving a list of paths (e.g., `list(c("detail", 1), c("followup", 1))`).
+#'   to target a specific element (by name or index), a deep path into nested
+#'   lists (e.g., `c("detail", 1)`), or a regex selector created with
+#'   [stringr::regex()] that is matched against top-level names
+#'   (e.g. `stringr::regex("^groups")`). You can also provide multiple targets
+#'   as a list of paths or selectors (e.g.,
+#'   `list(c("detail", 1), stringr::regex("^followup"))`).
+#'   Bare character strings are always treated as literal paths.
 #'   When a list of boxes is *piped* into `alignVertical()`/`alignHorizontal()` and a named `reference` is
 #'   provided (e.g. `my_boxes |> alignHorizontal(reference = c("grp","sub"), .subelement = ...)`), the
 #'   function will unwrap a single-element wrapper so nested `.subelement` targets are found as expected.
@@ -27,7 +37,7 @@
 #' @rdname align
 
 
-alignVertical <- function(reference, ..., position = c("center", "top", "bottom"), subelement = NULL) {
+alignVertical <- function(reference = NULL, ..., position = c("center", "top", "bottom"), subelement = NULL, references = NULL) {
   position <- match.arg(position)
 
   boxes2align <- list(...)
@@ -67,7 +77,7 @@ alignVertical <- function(reference, ..., position = c("center", "top", "bottom"
   # boxes to align and use its first element as the reference.
   if (length(boxes2align) == 0 && is.list(reference) && !inherits(reference, "box")) {
     boxes2align <- reference
-    reference <- boxes2align[[1]]
+    reference <- if (is.null(references)) boxes2align[[1]] else NULL
   }
 
   # If a list of boxes was piped into '...' as a single element (e.g., using
@@ -77,9 +87,16 @@ alignVertical <- function(reference, ..., position = c("center", "top", "bottom"
     boxes2align <- boxes2align[[1]]
   }
 
+  if (!is.null(references)) {
+    if (!is.null(reference)) {
+      stop("Use either `reference` or `references`, not both.", call. = FALSE)
+    }
+    prValidateReferencePair(references)
+  }
+
   if (!is.null(subelement)) {
     # Normalize into a list of paths (each path is an atomic vector)
-    paths <- if (is.list(subelement) && all(sapply(subelement, is.atomic))) subelement else list(subelement)
+    paths <- prResolveSubelementSelector(subelement, boxes2align)
 
     for (path in paths) {
       # Find target using helper (search top-level and first nested container)
@@ -99,13 +116,19 @@ alignVertical <- function(reference, ..., position = c("center", "top", "bottom"
         )
       }
 
-      # Resolve the reference path against the original list so recursive calls get an object
-      ref_for_call <- prResolveReference(reference, boxes2align)
+      ref_for_call <- prResolveAlignReference(
+        reference = reference,
+        references = references,
+        boxes2align = boxes2align,
+        axis = "vertical"
+      )
 
-      aligned <- alignVertical(
-        reference = ref_for_call,
-        target,
-        position = position
+      target_boxes <- if (inherits(target, "box")) list(target) else target
+      aligned <- prApplyAlign(
+        boxes2align = prNormalizeAndValidateBoxes(target_boxes),
+        ref_positions = prConvert2Coords(ref_for_call),
+        position = position,
+        axis = "vertical"
       )
 
       # If the target was a single box, the recursive call returns a
@@ -129,8 +152,12 @@ alignVertical <- function(reference, ..., position = c("center", "top", "bottom"
   # Normalize and validate boxes now that subelement processing is done
   boxes2align <- prNormalizeAndValidateBoxes(boxes2align)
 
-  # Resolve reference if it's a path into the boxes
-  reference <- prResolveReference(reference, boxes2align)
+  reference <- prResolveAlignReference(
+    reference = reference,
+    references = references,
+    boxes2align = boxes2align,
+    axis = "vertical"
+  )
   ref_positions <- prConvert2Coords(reference)
 
   # Apply vertical alignment
@@ -144,11 +171,12 @@ alignVertical <- function(reference, ..., position = c("center", "top", "bottom"
 #' @md
 #' @export
 alignHorizontal <- function(
-  reference,
+  reference = NULL,
   ...,
   position = c("center", "left", "right"),
   sub_position = c("none", "left", "right"),
-  subelement = NULL
+  subelement = NULL,
+  references = NULL
 ) {
   position <- match.arg(position)
   sub_position <- match.arg(sub_position)
@@ -185,7 +213,7 @@ alignHorizontal <- function(
   # boxes to align and use its first element as the reference.
   if (length(boxes2align) == 0 && is.list(reference) && !inherits(reference, "box")) {
     boxes2align <- reference
-    reference <- boxes2align[[1]]
+    reference <- if (is.null(references)) boxes2align[[1]] else NULL
   }
 
   # If a list of boxes was piped into '...' as a single element (e.g., using
@@ -195,9 +223,16 @@ alignHorizontal <- function(
     boxes2align <- boxes2align[[1]]
   }
 
+  if (!is.null(references)) {
+    if (!is.null(reference)) {
+      stop("Use either `reference` or `references`, not both.", call. = FALSE)
+    }
+    prValidateReferencePair(references)
+  }
+
   if (!is.null(subelement)) {
     # Normalize into a list of paths (each path is an atomic vector)
-    paths <- if (is.list(subelement) && all(sapply(subelement, is.atomic))) subelement else list(subelement)
+    paths <- prResolveSubelementSelector(subelement, boxes2align)
 
     for (path in paths) {
       # Find target using helper (search top-level and first nested container)
@@ -211,14 +246,31 @@ alignHorizontal <- function(
         )
       }
 
-      # Resolve the reference path against the original list so recursive calls get an object
-      ref_for_call <- prResolveReference(reference, boxes2align)
+      ref_for_call <- prResolveAlignReference(
+        reference = reference,
+        references = references,
+        boxes2align = boxes2align,
+        axis = "horizontal"
+      )
+      ref_positions <- prConvert2Coords(ref_for_call)
+      if (sub_position != "none") {
+        if (sub_position == "left") {
+          assert_class(ref_positions$left_x, "unit")
+          ref_positions$x <- ref_positions$left_x
+          ref_positions$right <- ref_positions$prop_x
+        } else {
+          assert_class(ref_positions$right_x, "unit")
+          ref_positions$x <- ref_positions$right_x
+          ref_positions$left <- ref_positions$prop_x
+        }
+      }
 
-      aligned <- alignHorizontal(
-        reference = ref_for_call,
-        target,
+      target_boxes <- if (inherits(target, "box")) list(target) else target
+      aligned <- prApplyAlign(
+        boxes2align = prNormalizeAndValidateBoxes(target_boxes),
+        ref_positions = ref_positions,
         position = position,
-        sub_position = sub_position
+        axis = "horizontal"
       )
 
       # Unwrap single-element aligned box when target is a single box to
@@ -240,8 +292,12 @@ alignHorizontal <- function(
   # Normalize and validate boxes now that subelement processing is done
   boxes2align <- prNormalizeAndValidateBoxes(boxes2align)
 
-  # Resolve reference if it's a path into the boxes
-  reference <- prResolveReference(reference, boxes2align)
+  reference <- prResolveAlignReference(
+    reference = reference,
+    references = references,
+    boxes2align = boxes2align,
+    axis = "horizontal"
+  )
   ref_positions <- prConvert2Coords(reference)
   if (sub_position != "none") {
     if (sub_position == "left") {

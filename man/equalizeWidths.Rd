@@ -9,10 +9,12 @@ equalizeWidths(x, subelement = NULL, width = NULL)
 \arguments{
 \item{x}{A list of boxes (or nested lists of boxes). Can also be a single box.}
 
-\item{subelement}{Optional target(s) inside \code{x}.
-Can be a single path (e.g. \code{c("groups", 1)}) or a list of paths
-(e.g. \code{list(c("groups", 1), c("groups2", 1))}).
-If \code{NULL}, all top-level boxes in \code{x} are used.}
+\item{subelement}{Optional target(s) inside \code{x}. Can be a single path
+(e.g. \code{"groups"} or \code{c("groups", 1)}), a list of paths
+(e.g. \code{list(c("groups", 1), c("groups2", 1))}), or a regex selector
+created with \code{\link[stringr:regex]{stringr::regex()}} that is matched against top-level names
+(e.g. \code{stringr::regex("^groups")}). Bare character strings are always
+treated as literal paths. If \code{NULL}, all top-level boxes in \code{x} are used.}
 
 \item{width}{Optional width to apply. If \code{NULL}, the maximum current width
 among selected boxes is used.}
@@ -50,10 +52,13 @@ Other flowchart components:
 \code{\link[=connectGrob]{connectGrob()}},
 \code{\link[=coords]{coords()}},
 \code{\link[=distance]{distance()}},
+\code{\link[=equalizeHeights]{equalizeHeights()}},
 \code{\link[=flowchart]{flowchart()}},
 \code{\link[=insert]{insert()}},
 \code{\link[=move]{move()}},
 \code{\link[=moveBox]{moveBox()}},
+\code{\link[=phaseLabel]{phaseLabel()}},
+\code{\link[=position]{position()}},
 \code{\link[=spread]{spread()}}
 }
 \concept{flowchart components}

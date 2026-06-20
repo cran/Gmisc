@@ -49,6 +49,52 @@ flowchart(
   connect("included", "groups",   type = "N",    lty_gp = main_con_gp, arrow_size = 3,
           smooth = TRUE)
 
+## ----consort-stage-headings, fig.height = 7, fig.width = 8--------------------
+old_opts <- options(boxGrobTxtPadding = unit(2, "mm"))
+
+main_box_gp <- gpar(fill = "white", col = "black", lwd = 1)
+heading_gp  <- gpar(fill = "#c8daf7", col = "#2f5f9f", lwd = 1)
+con_gp      <- gpar(col = "#4f86c6", fill = "#4f86c6", lwd = 1.8)
+side_width  <- unit(70, "mm")
+
+flowchart(
+  rando = boxGrob("Randomised\nN = 100", box_gp = main_box_gp),
+  groups = list(
+    boxGrob("Allocated to intervention\nn = 50",
+            width = side_width, box_gp = main_box_gp),
+    boxGrob("Allocated to control\nn = 50",
+            width = side_width, box_gp = main_box_gp)
+  ),
+  followup = list(
+    boxGrob("Lost to follow-up\nn = 1",
+            width = side_width, box_gp = main_box_gp),
+    boxGrob("Lost to follow-up\nn = 2",
+            width = side_width, box_gp = main_box_gp)
+  ),
+  analysis = list(
+    boxGrob("Analysed\nn = 49",
+            width = side_width, box_gp = main_box_gp),
+    boxGrob("Analysed\nn = 48",
+            width = side_width, box_gp = main_box_gp)
+  )
+) |>
+  spread(axis = "y", margin = unit(0.04, "npc")) |>
+  # Spread each stage's arms within the viewport, leaving an outer margin —
+  # this gives the two arms a clear central gap for the labels to sit in
+  spread(subelement = "groups",   axis = "x", margin = unit(0.05, "npc")) |>
+  spread(subelement = "followup", axis = "x", margin = unit(0.05, "npc")) |>
+  spread(subelement = "analysis", axis = "x", margin = unit(0.05, "npc")) |>
+  # One call per stage: centred between the arms, slightly above, drawn on top
+  phaseLabel("groups",   "Allocation", box_gp = heading_gp) |>
+  phaseLabel("followup", "Follow-up",  box_gp = heading_gp) |>
+  phaseLabel("analysis", "Analysis",   box_gp = heading_gp) |>
+  connect("rando",    "groups",   type = "N", lty_gp = con_gp, arrow_size = 3,
+          smooth = TRUE) |>
+  connect("groups",   "followup", type = "v", lty_gp = con_gp, arrow_size = 3) |>
+  connect("followup", "analysis", type = "v", lty_gp = con_gp, arrow_size = 3)
+
+options(old_opts)
+
 ## ----consort_example, fig.width = 9, fig.height = 6---------------------------
 old_opts <- options(boxGrobTxtPadding = unit(3, "mm"))
 
@@ -59,12 +105,11 @@ excl_fill    <- gpar(fill = "#fff8e1", col = "#cc8800", lwd = 1.2)
 badge_gp     <- gpar(fill = "#336699", col = NA)
 badge_txt_gp <- gpar(col = "white", cex = 0.65)
 
-# Arms span the inner portion; lost boxes flank outside on each side.
-# Using 0.28–0.72 keeps the arm centres far enough from the viewport edges
-# that the lost boxes' right/left edges don't cross the arm centres.
-left_from <- 0.28
-left_to   <- 0.72
-main_x    <- (left_from + left_to) / 2   # centre of the arms column (= 0.5)
+# Main arms use an inner horizontal span; exclusions use the outer span.
+main_arm_margin  <- 0.28
+exclusion_margin <- 0.05
+main_x           <- 0.5
+exclusion_to     <- 1 - exclusion_margin
 
 grid.newpage()
 flowchart(
@@ -88,8 +133,8 @@ flowchart(
                        badge_label = "64",
                        badge_gp = badge_gp, badge_txt_gp = badge_txt_gp)
   ),
-  # Lost-to-follow-up: one per arm — spread from 0 to 1 so they land
-  # on the outside of each arm (left of cast, right of surgical)
+  # Lost-to-follow-up: one per arm, placed on the outer exclusion span
+  # and centred vertically between allocation and analysis.
   lost = list(
     lost_cast     = boxGrob("Lost to follow-up (n = 2)\n  1 No response\n  1 Other surgery",
                             just = "left", box_gp = excl_fill),
@@ -107,8 +152,10 @@ flowchart(
                                 badge_gp = badge_gp, badge_txt_gp = badge_txt_gp)
   )
 ) |>
-  # Vertical spacing — extra margin to keep badges from being clipped at the top
-  spread(axis = "y", margin = unit(5, "mm")) |>
+  # Vertical spacing — lost boxes are side branches, not main pathway rows
+  spread(axis = "y", margin = unit(5, "mm"), exclude = "lost") |>
+  align(axis = "y", subelement = "lost",
+        references = list("arms", "analysis")) |>
   # Make arms and analysis boxes the same width so the same from/to spread
   # places their centres at matching x positions (otherwise the wider arm text
   # shifts centres relative to the narrower analysis text).
@@ -116,27 +163,108 @@ flowchart(
   # e.g. with `align(axis = "x", reference = "analysis", subelement = "arms")`
   # (equivalent to `alignHorizontal(reference = "analysis", subelement = "arms")`).
   equalizeWidths(subelement = list("arms", "analysis")) |>
-  # Arms and analysis in the inner span; lost boxes spread across full width
+  # Arms and analysis in the inner span; lost boxes use the outer span
   # so that lost_cast lands left of cast and lost_surgical right of surgical
-  spread(axis = "x", subelement = "arms",     from = left_from, to = left_to) |>
-  spread(axis = "x", subelement = "analysis", from = left_from, to = left_to) |>
-  spread(axis = "x", subelement = "lost",     from = 0,         to = 1) |>
-  # Exclusion box: auto-positioned between assessed and randomised, then moved right
+  spread(axis = "x", subelement = "arms",     margin = main_arm_margin) |>
+  spread(axis = "x", subelement = "analysis", margin = main_arm_margin) |>
+  spread(axis = "x", subelement = "lost",     margin = exclusion_margin) |>
+  # Exclusion box: right edge on the outer span, vertically centred between rows
   insert(list(excluded = boxGrob(
     "Excluded (n = 714)\n  477 Stable ankle mortise\n   64 Incongruent ankle mortise\n   30 Previous serious trauma\n  143 Other reasons",
     just = "left", box_gp = excl_fill
   )), after = "assessed") |>
-  move(subelement = "excluded", x = 0.85) |>
-  # Main-flow connectors
-  connect("assessed",   "randomised", type = "v", lty_gp = con_gp,  arrow_size = 3, smooth = TRUE) |>
-  connect("randomised", "arms",       type = "N", lty_gp = con_gp,  arrow_size = 3, smooth = TRUE) |>
-  connect("arms",       "analysis",   type = "v", lty_gp = con_gp,  arrow_size = 3) |>
+  move(subelement = "excluded", x = exclusion_to, just = "right") |>
+  align(axis = "y", subelement = "excluded",
+        references = list("assessed", "randomised"))  |>
   # type = "L": exits assessed's *bottom* then turns right — the "down then right" branch
   connect("assessed", "excluded", type = "L", lty_gp = side_gp, arrow_size = 3, smooth = TRUE) |>
   # Pairwise arm -> lost: sharp corners (smooth = FALSE) avoid a colour-transition
   # artefact where the orange arc would diverge from the shared blue vertical path
   # a few mm above the junction, making the line appear doubled.
-  connect("arms", "lost", type = "L", lty_gp = side_gp, arrow_size = 3, smooth = TRUE)
+  connect("arms", "lost", type = "L", lty_gp = side_gp, arrow_size = 3, smooth = TRUE) |>
+  # Main-flow connectors, put last so that the main lines end up on top of the exclusion/lost lines
+  connect("assessed",   "randomised", type = "v", lty_gp = con_gp,  arrow_size = 3, smooth = TRUE) |>
+  connect("randomised", "arms",       type = "N", lty_gp = con_gp,  arrow_size = 3, smooth = TRUE) |>
+  connect("arms",       "analysis",   type = "v", lty_gp = con_gp,  arrow_size = 3)
+
+options(old_opts)
+
+## ----consort_dotted_return_arrows, fig.width = 10, fig.height = 9-------------
+old_opts <- options(boxGrobTxtPadding = unit(1, "mm"))
+
+main_gp <- gpar(fill = "white", col = "black")
+main_con_gp <- gpar(col = "black", fill = "black")
+dotted_gp <- gpar(col = "black", fill = "black", lty = 2)
+arm_from <- .05
+arm_to <- .75
+box_width <- unit(56, "mm")
+ex_width <- unit(36, "mm")
+ex_gap <- unit(5, "mm")
+ex_offset <- box_width / 2 + ex_width / 2 + ex_gap
+
+grid.newpage()
+flowchart(
+  rando = boxGrob("Randomised\nN = 197", box_gp = main_gp),
+  groups = list(
+    boxGrob("96 assigned to\ndecompressive craniectomy\nplus best medical treatment\n95 received allocated\nintervention",
+            box_gp = main_gp),
+    boxGrob("101 assigned to best medical\ntreatment alone\n93 received allocated\nintervention",
+            box_gp = main_gp)
+  ),
+  ex1 = list(
+    boxGrob("8 died\n1 withdrew\nconsent", just = "left", box_gp = main_gp),
+    boxGrob("18 died\n1 withdrew\nconsent", just = "left", box_gp = main_gp)
+  ),
+  groups1 = list(
+    boxGrob("87 completed day 30\nfollow-up", box_gp = main_gp),
+    boxGrob("79 completed day 30\nfollow-up", box_gp = main_gp)
+  ),
+  ex2 = list(
+    boxGrob("8 died", just = "left", box_gp = main_gp),
+    boxGrob("9 died\n1 withdrew\nconsent\n2 lost to follow-up",
+            just = "left", box_gp = main_gp)
+  ),
+  groups2 = list(
+    boxGrob("79 completed day 180\nfollow-up", box_gp = main_gp),
+    boxGrob("68 completed day 180\nfollow-up", box_gp = main_gp)
+  ),
+  ex3 = list(
+    boxGrob("5 died\n2 lost to\nfollow-up", just = "left", box_gp = main_gp),
+    boxGrob("3 died\n2 withdrew\nconsent\n6 lost to follow-up",
+            just = "left", box_gp = main_gp)
+  ),
+  groups3 = list(
+    boxGrob("95 included in the primary\noutcome analysis\n1 withdrew consent",
+            box_gp = main_gp),
+    boxGrob("95 included in the primary\noutcome analysis\n2 withdrew consent\n2 lost to follow-up",
+            box_gp = main_gp)
+  )
+) |>
+  spread(axis = "y", margin = unit(0.02, "npc")) |>
+  equalizeWidths(subelement = stringr::regex("^groups"), width = box_width) |>
+  equalizeHeights(subelement = stringr::regex("^groups")) |>
+  equalizeWidths(subelement = stringr::regex("^ex"), width = ex_width) |>
+  spread(subelement = stringr::regex("^groups"), axis = "x", from = arm_from, to = arm_to,
+         type = "center") |>
+  move(subelement = "rando",
+       x = position("groups", position = "center", type = "x")) |>
+  move(subelement = list(c("ex1", 1), c("ex2", 1), c("ex3", 1)),
+       x = position(c("groups", 1), position = "center", type = "x") + ex_offset) |>
+  move(subelement = list(c("ex1", 2), c("ex2", 2), c("ex3", 2)),
+       x = position(c("groups", 2), position = "center", type = "x") + ex_offset) |>
+  connect("rando", "groups", type = "N", lty_gp = main_con_gp, arrow_size = 3) |>
+  connect("groups", "groups1", type = "vertical", lty_gp = main_con_gp, arrow_size = 3) |>
+  connect("groups1", "groups2", type = "vertical", lty_gp = main_con_gp, arrow_size = 3) |>
+  connect("groups2", "groups3", type = "vertical", lty_gp = main_con_gp, arrow_size = 3) |>
+  connect("groups", "ex1", type = "L", lty_gp = main_con_gp, arrow_size = 3) |>
+  connect("groups1", "ex2", type = "L", lty_gp = main_con_gp, arrow_size = 3) |>
+  connect("groups2", "ex3", type = "L", lty_gp = main_con_gp, arrow_size = 3) |>
+  connect(stringr::regex("^ex"), "groups3", type = "side",
+          lty_gp = dotted_gp, arrow_size = 3,
+          side = "right",
+          end_side = "right",
+          side_route = "outside",
+          side_offset = ex_gap)
 
 options(old_opts)
 
@@ -163,6 +291,59 @@ flowchart(
 
 options(old_opts)
 
+## ----axis_preserving_connectors, fig.width = 10, fig.height = 7---------------
+input_gp     <- gpar(fill = "#F3F8FF", col = "#3B73C5", lwd = 1.3)
+process_gp   <- gpar(fill = "#FFF4C7", col = "#C69214", lwd = 1.3)
+issue_gp     <- gpar(fill = "#FCE4EC", col = "#AD1457", lwd = 1.2)
+output_gp    <- gpar(fill = "#E8F5E9", col = "#2E7D32", lwd = 1.3)
+con_gp       <- gpar(col = "#555555", fill = "#555555", lwd = 1.3)
+issue_con_gp <- gpar(col = "#AD1457", fill = "#AD1457", lwd = 1.1)
+main_path    <- list("validation", "clean")
+
+grid.newpage()
+flowchart(
+  inputs = list(
+    web    = boxEllipseGrob("REDCap\nform",   width = unit(42, "mm"), height = unit(24, "mm"), box_gp = input_gp),
+    import = boxDatabaseGrob("CSV\nimport",    width = unit(42, "mm"), height = unit(24, "mm"), box_gp = input_gp),
+    manual = boxDocumentGrob("Manual\nentry",  width = unit(42, "mm"), height = unit(24, "mm"), box_gp = input_gp)
+  ),
+  validation = boxTapeGrob(
+    "Validation queue\nIDs, dates, ranges, missingness",
+    width = unit(.58, "npc"), height = unit(.14, "npc"), box_gp = process_gp
+  ),
+  issues = list(
+    missing   = boxDiamondGrob("Missing\nfields", width = unit(48, "mm"), height = unit(14, "mm"), box_gp = issue_gp),
+    duplicate = boxDiamondGrob("Duplicate\nID",   width = unit(48, "mm"), height = unit(14, "mm"), box_gp = issue_gp),
+    outlier   = boxDiamondGrob("Outlier\nvalue",  width = unit(48, "mm"), height = unit(14, "mm"), box_gp = issue_gp)
+  ),
+  log = boxDocumentsGrob(
+    "Issue log\nqueries sent\nchanges reviewed",
+    width = unit(48, "mm"), height = unit(.44, "npc"), box_gp = issue_gp
+  ),
+  clean = boxDatabaseGrob(
+    "Analysis-ready dataset\nlocked for report",
+    width = unit(.44, "npc"), height = unit(.16, "npc"), box_gp = output_gp
+  )
+) |>
+  # Main vertical flow (inputs -> validation -> clean); issues are a side column
+  spread(axis = "y", margin = unit(7, "mm"), exclude = "issues") |>
+  spread(axis = "x", subelement = "inputs", from = 0, to = 0.7, margin = 0.05, type = "center") |>
+  equalizeWidths(subelement = main_path) |>
+  align(axis = "x", subelement = "validation", reference = "inputs") |>
+  align(axis = "x", subelement = "clean", reference = "validation") |>
+  # Place the issue log beside the main flow and stack the diamonds along it
+  align(axis = "y", subelement = "log", references = list("validation", "clean")) |>
+  spread(axis = "y", subelement = "issues",
+         from = position("log", position = "top", type = "y"),
+         to   = position("log", position = "bottom", type = "y"),
+         margin = unit(2, "mm")) |>
+  move(subelement = "issues", x = 0.08, just = "left") |>
+  move(subelement = "log",    x = 0.92, just = "right") |>
+  connect("inputs", "validation", type = "vertical_axis",   lty_gp = con_gp,       arrow_size = 3) |>
+  connect("issues", "log",        type = "horizontal_axis", lty_gp = issue_con_gp, arrow_size = 3) |>
+  connect("validation", "clean",  type = "vertical_axis",   lty_gp = con_gp,       arrow_size = 3, smooth = TRUE) |>
+  print()
+
 ## ----basic_box, fig.height = 1.5, fig.width = 3, message = FALSE--------------
 grid.newpage()
 txt <-
@@ -186,7 +367,7 @@ boxPropGrob("A box with proportions",
             "Left side", "Right side",
             prop = .7)
 
-## ----fig.height = 3, fig.width = 4--------------------------------------------
+## ----box_coordinates, fig.height = 3, fig.width = 4---------------------------
 grid.newpage()
 smpl_bx <- boxGrob(
   label = "A simple box",
@@ -268,37 +449,27 @@ grid.circle(y = prop_bx_coords$top,
             gp = gpar(fill = "orange"))
 
 ## ----extra_shapes, fig.height = 3, fig.width = 6------------------------------
-# --- Branch labels + sharp diamond variant ---
+# --- Branch labels on alternate shapes ---
 grid.newpage()
 
-# rounded and sharp diamond examples
-d_rounded <- boxDiamondGrob("Decision", box_gp = gpar(fill = "#FFF4E6"))
-d_sharp   <- boxDiamondGrob("Decision\n(sharp)", rounded = FALSE, box_gp = gpar(fill = "#FFF4E6"))
+decision <- boxDiamondGrob("Decision", box_gp = gpar(fill = "#FFF4E6"))
+local    <- boxEllipseGrob("Local", box_gp = gpar(fill = "#E6FFF4"))
+server   <- boxServerGrob("Server", box_gp = gpar(fill = "#E8F0FF"))
 
-# outcomes
-e <- boxEllipseGrob("Local", box_gp = gpar(fill = "#E6FFF4"))
-r <- boxServerGrob("Server", box_gp = gpar(fill = "#E8F0FF"))
-
-# arrange and draw
-boxes <- list(decision = d_rounded, outcomes = list(e, r)) |>
+# Position the boxes, then draw them. The ellipse carries extra padding so its
+# text fits the curved outline, making it taller than the server box; equalize
+# the outcome heights so both branches line up symmetrically.
+boxes <- list(decision = decision, outcomes = list(local, server)) |>
+  equalizeHeights(subelement = "outcomes") |>
   spreadHorizontal(from = unit(.1, "npc"), to = unit(.9, "npc"), subelement = "outcomes") |>
   spreadVertical() |>
   print()
 
-# 1) quick many-to-many style connector (no labels)
-con <- connectGrob(boxes$decision, boxes$outcomes, type = "N")
-print(con)
-
-# 2) explicit per-branch connectors with labels (preferred when you want text)
-connectGrob(boxes$decision, boxes$outcomes[[1]], type = "N", label = "Local") |> print()
-connectGrob(boxes$decision, boxes$outcomes[[2]], type = "N", label = "Server") |> print()
-
-# 3) If you prefer the single connector and want labels on each branch:
-#    place text at the midpoint of each returned grob (example)
-con_list <- connectGrob(boxes$decision, boxes$outcomes, type = "N")
-# Preferred: attach labels and let `print()` handle rendering
-con_list <- setConnectorLabels(con_list, c("Local", "Server"))
-print(con_list)
+# Build one N connector for both branches and attach a label to each with
+# setConnectorLabels(); print() then draws the lines and labels together.
+connectGrob(boxes$decision, boxes$outcomes, type = "N") |>
+  setConnectorLabels(c("Local", "Server")) |>
+  print()
 
 ## ----standard_shapes, fig.height = 3.5, fig.width = 8-------------------------
 # Arrange shapes in three rows for better readability
